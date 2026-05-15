@@ -1,0 +1,92 @@
+@startjson
+{
+  "Modulo": "IA y Recomendaciones",
+  "Capa": "Capa 6 - Motivacion",
+  "Breve descripcion": "El sistema usa IA adaptativa para recomendar ejercicios segun el rendimiento del estudiante, ajustar la dificultad de los parametros, proveer un asistente de dudas y alertar al profesor sobre patrones de error recurrentes.",
+  "Actores primarios": "Estudiante, Profesor",
+  "Actores secundarios": "Motor de ejercicios parametrizados, Motor de analitica",
+  "Precondiciones": [
+    "El estudiante tiene historial de al menos 5 ejercicios resueltos.",
+    "El motor de ejercicios parametrizados esta activo.",
+    "El profesor ha publicado al menos un ejercicio parametrizado."
+  ],
+  "Historias de usuario": [
+    {
+      "Id": "HU-IAR-01",
+      "Rol": "Estudiante",
+      "Historia": "Quiero recibir ejercicios parametrizados recomendados segun mis areas debiles para mejorar donde mas me cuesta.",
+      "Criterios de aceptacion": [
+        "Las recomendaciones se basan en el historial de aciertos y errores.",
+        "Se muestran en la pantalla de inicio tras iniciar sesion.",
+        "El estudiante puede rechazar una recomendacion para recibir otra."
+      ],
+      "RF relacionado": "IAR-01"
+    },
+    {
+      "Id": "HU-IAR-02",
+      "Rol": "Estudiante",
+      "Historia": "Quiero que la dificultad de los parametros se ajuste a mi nivel para no sentirme ni aburrido ni abrumado.",
+      "Criterios de aceptacion": [
+        "El sistema incrementa la dificultad al superar el 80% de aciertos.",
+        "La dificultad disminuye al bajar del 40% de aciertos.",
+        "El ajuste es gradual, no brusco."
+      ],
+      "RF relacionado": "IAR-02, EJP-04"
+    },
+    {
+      "Id": "HU-IAR-03",
+      "Rol": "Estudiante",
+      "Historia": "Quiero consultar al asistente IA mis dudas matematicas para obtener ayuda en cualquier momento del dia.",
+      "Criterios de aceptacion": [
+        "El asistente responde en menos de 5 segundos.",
+        "Soporta formulas LaTeX en preguntas y respuestas.",
+        "El historial de consultas esta disponible en la sesion activa."
+      ],
+      "RF relacionado": "IAR-03"
+    },
+    {
+      "Id": "HU-IAR-04",
+      "Rol": "Estudiante",
+      "Historia": "Quiero que el sistema me sugiera el siguiente tema a estudiar para no perder tiempo decidiendo que hacer.",
+      "Criterios de aceptacion": [
+        "La sugerencia considera prerequisitos completados y areas debiles.",
+        "Se muestra un motivo de la sugerencia al estudiante.",
+        "El estudiante puede ignorar la sugerencia y navegar libremente."
+      ],
+      "RF relacionado": "IAR-04"
+    },
+    {
+      "Id": "HU-IAR-05",
+      "Rol": "Estudiante",
+      "Historia": "Quiero recibir un resumen semanal de mi desempeno para reflexionar sobre mi avance y ajustar mi estrategia de estudio.",
+      "Criterios de aceptacion": [
+        "El resumen llega por notificacion in-app y correo los domingos.",
+        "Incluye XP ganado, ejercicios resueltos y tasa de aciertos.",
+        "Muestra comparativa con la semana anterior."
+      ],
+      "RF relacionado": "IAR-05"
+    },
+    {
+      "Id": "HU-IAR-06",
+      "Rol": "Profesor",
+      "Historia": "Quiero recibir alertas sobre errores recurrentes en ejercicios parametrizados para reforzar esos conceptos en mis clases.",
+      "Criterios de aceptacion": [
+        "La alerta se activa si mas del 50% de estudiantes falla el mismo tipo de ejercicio.",
+        "El informe incluye los errores mas frecuentes por area.",
+        "El profesor puede acceder al detalle desde la alerta."
+      ],
+      "RF relacionado": "IAR-06, REP-08"
+    }
+  ],
+  "Flujos alternativos": {
+    "A1: Sin historial suficiente": "El sistema muestra ejercicios de nivel basico hasta tener datos suficientes para adaptar.",
+    "A2: Asistente IA sin respuesta": "El sistema sugiere buscar en el foro o contactar al profesor.",
+    "A3: Todos los temas completados": "El sistema recomienda reforzar los temas con menor puntaje o intentar el simulacro EESPP."
+  },
+  "Postcondiciones": [
+    "Las recomendaciones se actualizan con cada nuevo intento.",
+    "El modelo adaptativo incorpora el resultado del ejercicio al historial.",
+    "El profesor recibe el reporte de alertas en su panel de gestion."
+  ]
+}
+@endjson

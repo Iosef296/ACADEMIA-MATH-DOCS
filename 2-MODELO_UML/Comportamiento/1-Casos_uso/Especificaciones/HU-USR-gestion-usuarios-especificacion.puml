@@ -1,0 +1,74 @@
+@startjson
+{
+  "Modulo": "Gestion de Usuarios",
+  "Capa": "Capa 1 - Acceso",
+  "Historias de usuario": [
+    {
+      "Id": "HU-USR-01",
+      "Rol": "Admin",
+      "Historia": "Quiero crear, editar y desactivar cuentas para gestionar quien tiene acceso a la plataforma.",
+      "Criterios de aceptacion": [
+        "El admin puede crear cuentas con rol asignado.",
+        "Las cuentas desactivadas no pueden iniciar sesion.",
+        "Los datos del usuario desactivado se conservan."
+      ],
+      "RF relacionado": "USR-02"
+    },
+    {
+      "Id": "HU-USR-02",
+      "Rol": "Admin",
+      "Historia": "Quiero asignar roles a los usuarios para definir que puede hacer cada persona.",
+      "Criterios de aceptacion": [
+        "Los roles disponibles son: administrador, profesor y estudiante.",
+        "El cambio de rol surte efecto inmediatamente.",
+        "Solo el admin puede cambiar roles."
+      ],
+      "RF relacionado": "USR-01, USR-03"
+    },
+    {
+      "Id": "HU-USR-03",
+      "Rol": "Admin",
+      "Historia": "Quiero buscar usuarios por nombre, correo o rol para gestionar cuentas eficientemente.",
+      "Criterios de aceptacion": [
+        "La busqueda funciona con terminos parciales.",
+        "Los resultados incluyen nombre, correo, rol y estado.",
+        "Se puede filtrar por estado activo/inactivo."
+      ],
+      "RF relacionado": "USR-07"
+    },
+    {
+      "Id": "HU-USR-04",
+      "Rol": "Estudiante",
+      "Historia": "Quiero editar mi perfil con foto y bio para personalizar mi presencia en la academia.",
+      "Criterios de aceptacion": [
+        "El sistema acepta imagenes JPG/PNG de hasta 2 MB.",
+        "Los cambios se guardan y reflejan inmediatamente.",
+        "El usuario puede previsualizar antes de guardar."
+      ],
+      "RF relacionado": "USR-04, USR-05"
+    },
+    {
+      "Id": "HU-USR-05",
+      "Rol": "Admin",
+      "Historia": "Quiero registrar la fecha de ultimo acceso para identificar usuarios inactivos.",
+      "Criterios de aceptacion": [
+        "La fecha se actualiza en cada inicio de sesion exitoso.",
+        "El admin puede filtrar usuarios por inactividad.",
+        "El dato es visible en el panel de gestion de usuarios."
+      ],
+      "RF relacionado": "USR-06"
+    },
+    {
+      "Id": "HU-USR-06",
+      "Rol": "Admin",
+      "Historia": "Quiero gestionar apoderados de estudiantes menores para mantener informados a los padres del avance de sus hijos.",
+      "Criterios de aceptacion": [
+        "Cada estudiante menor puede tener uno o mas apoderados.",
+        "El apoderado recibe reportes de progreso periodicos.",
+        "El apoderado no tiene acceso al contenido de la plataforma."
+      ],
+      "RF relacionado": "USR-08"
+    }
+  ]
+}
+@endjson

@@ -1,0 +1,114 @@
+@startjson
+{
+  "Modulo": "Pagos y Suscripciones",
+  "Capa": "Capa 1 - Acceso",
+  "Breve descripcion": "El sistema permite al estudiante suscribirse a planes, pagar con pasarela local (Culqi, Izipay o Mercado Pago), generar comprobantes y matricularse en cursos. El admin gestiona historial de pagos y configura planes.",
+  "Actores primarios": "Estudiante",
+  "Actores secundarios": "Admin, SUNAT (emision de comprobante), Pasarela de pago",
+  "Precondiciones": [
+    "El estudiante tiene una cuenta verificada.",
+    "El admin ha configurado al menos un plan de suscripcion.",
+    "La pasarela de pago esta activa e integrada."
+  ],
+  "Historias de usuario": [
+    {
+      "Id": "HU-PAG-01",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ver los planes y sus precios para elegir el que mejor se adapte a mis necesidades.",
+      "Criterios de aceptacion": [
+        "Los planes (mensual, trimestral, anual) se muestran con sus beneficios.",
+        "El precio con y sin descuento es visible.",
+        "Se puede comparar planes en una tabla."
+      ],
+      "RF relacionado": "PAG-01"
+    },
+    {
+      "Id": "HU-PAG-02",
+      "Rol": "Estudiante",
+      "Historia": "Quiero pagar con tarjeta de forma segura para activar mi suscripcion sin preocupaciones.",
+      "Criterios de aceptacion": [
+        "La transaccion es procesada por la pasarela integrada (Culqi/Izipay/Mercado Pago).",
+        "El sistema no almacena datos de tarjeta.",
+        "Al completar el pago, el acceso se activa inmediatamente."
+      ],
+      "RF relacionado": "PAG-02"
+    },
+    {
+      "Id": "HU-PAG-03",
+      "Rol": "Estudiante",
+      "Historia": "Quiero descargar mi comprobante de pago para tener un respaldo de mis transacciones.",
+      "Criterios de aceptacion": [
+        "El comprobante se genera en PDF con datos de la transaccion.",
+        "Disponible desde el historial de pagos del perfil.",
+        "El comprobante cumple con el formato aceptado por SUNAT."
+      ],
+      "RF relacionado": "PAG-03"
+    },
+    {
+      "Id": "HU-PAG-04",
+      "Rol": "Estudiante",
+      "Historia": "Quiero aplicar un codigo de descuento para obtener un precio especial en mi suscripcion.",
+      "Criterios de aceptacion": [
+        "El codigo se valida en tiempo real antes de pagar.",
+        "Se muestra el descuento aplicado antes de confirmar.",
+        "Un codigo solo puede usarse una vez por cuenta."
+      ],
+      "RF relacionado": "PAG-05"
+    },
+    {
+      "Id": "HU-PAG-05",
+      "Rol": "Estudiante",
+      "Historia": "Quiero recibir un aviso antes de que venza mi suscripcion para renovarla a tiempo.",
+      "Criterios de aceptacion": [
+        "La notificacion se envia 7 dias y 1 dia antes del vencimiento.",
+        "El aviso llega por correo y notificacion in-app.",
+        "El enlace de renovacion lleva directamente al pago."
+      ],
+      "RF relacionado": "PAG-04"
+    },
+    {
+      "Id": "HU-PAG-06",
+      "Rol": "Admin",
+      "Historia": "Quiero ver el historial de pagos para controlar los ingresos de la academia.",
+      "Criterios de aceptacion": [
+        "El historial filtra por fecha, usuario y plan.",
+        "Muestra el estado de cada transaccion (completada, pendiente, fallida).",
+        "Es exportable en Excel o CSV."
+      ],
+      "RF relacionado": "PAG-06"
+    },
+    {
+      "Id": "HU-PAG-07",
+      "Rol": "Admin",
+      "Historia": "Quiero configurar un periodo de prueba gratuito para atraer nuevos estudiantes a la plataforma.",
+      "Criterios de aceptacion": [
+        "La duracion del periodo de prueba es configurable.",
+        "Al finalizar, el acceso premium se bloquea hasta suscribirse.",
+        "No se requiere tarjeta para activar la prueba."
+      ],
+      "RF relacionado": "PAG-08"
+    },
+    {
+      "Id": "HU-PAG-08",
+      "Rol": "Estudiante",
+      "Historia": "Quiero matricularme en un curso especifico para acceder solo al contenido que necesito.",
+      "Criterios de aceptacion": [
+        "La matricula puede ser independiente de la suscripcion global.",
+        "El estudiante tiene acceso al curso tras confirmar la matricula.",
+        "El admin puede ver el listado de matriculados por curso."
+      ],
+      "RF relacionado": "PAG-09"
+    }
+  ],
+  "Flujos alternativos": {
+    "A1: Pago rechazado por la pasarela": "El sistema informa el motivo y ofrece reintentar o usar otro metodo.",
+    "A2: Suscripcion vencida": "El sistema bloquea el acceso a contenido premium y redirige al flujo de renovacion.",
+    "A3: Fallo en emision de comprobante": "El sistema registra la transaccion y reintenta la emision del comprobante automaticamente."
+  },
+  "Postcondiciones": [
+    "La suscripcion queda activa en el perfil del estudiante.",
+    "El comprobante esta disponible en el historial.",
+    "Se registra la transaccion en el log de auditoria."
+  ]
+}
+@endjson

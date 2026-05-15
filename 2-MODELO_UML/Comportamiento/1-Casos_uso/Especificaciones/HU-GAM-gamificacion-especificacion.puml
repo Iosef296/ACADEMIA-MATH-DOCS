@@ -1,0 +1,92 @@
+@startjson
+{
+  "Modulo": "Gamificacion",
+  "Capa": "Capa 6 - Motivacion",
+  "Breve descripcion": "El sistema otorga XP, insignias y niveles al estudiante por completar actividades academicas, fomentando la motivacion y el habito de estudio diario.",
+  "Actores primarios": "Estudiante",
+  "Actores secundarios": "Admin",
+  "Precondiciones": [
+    "El estudiante ha iniciado sesion.",
+    "El admin ha configurado los criterios de los logros.",
+    "El estudiante ha realizado al menos una actividad valorable."
+  ],
+  "Historias de usuario": [
+    {
+      "Id": "HU-GAM-01",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ganar XP al completar temas, ejercicios parametrizados y examenes para sentir progreso y motivacion en mi estudio.",
+      "Criterios de aceptacion": [
+        "El XP se acredita inmediatamente al completar la actividad.",
+        "El XP varia segun tipo de actividad y dificultad.",
+        "El uso de pistas reduce el XP obtenido en ejercicios."
+      ],
+      "RF relacionado": "GAM-01"
+    },
+    {
+      "Id": "HU-GAM-02",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ver el ranking semanal para compararme con mis companeros y esforzarme mas.",
+      "Criterios de aceptacion": [
+        "El ranking muestra nombre, nivel e insignias del top 10.",
+        "El estudiante siempre ve su propia posicion aunque no este en el top.",
+        "El ranking se reinicia los lunes a las 00:00."
+      ],
+      "RF relacionado": "GAM-02"
+    },
+    {
+      "Id": "HU-GAM-03",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ganar insignias por logros especificos como '100 ejercicios parametrizados resueltos' para coleccionar reconocimientos por mi esfuerzo.",
+      "Criterios de aceptacion": [
+        "Cada insignia tiene descripcion, icono y fecha de obtencion.",
+        "Se muestra una animacion al desbloquear una insignia nueva.",
+        "El estudiante puede ver las insignias bloqueadas para motivarse."
+      ],
+      "RF relacionado": "GAM-03"
+    },
+    {
+      "Id": "HU-GAM-04",
+      "Rol": "Estudiante",
+      "Historia": "Quiero subir de nivel al acumular XP para sentir que mi dedicacion tiene recompensa visible.",
+      "Criterios de aceptacion": [
+        "El nivel actual y el progreso al siguiente son siempre visibles.",
+        "Cada nivel desbloquea privilegios o insignias exclusivas.",
+        "El historial de niveles alcanzados es consulable."
+      ],
+      "RF relacionado": "GAM-04"
+    },
+    {
+      "Id": "HU-GAM-05",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ver mis insignias en mi perfil para mostrar mis logros a mis companeros.",
+      "Criterios de aceptacion": [
+        "Las insignias obtenidas se muestran en el perfil publico.",
+        "El estudiante puede elegir cuales destacar.",
+        "Las insignias tienen descripcion del logro al pasar el cursor."
+      ],
+      "RF relacionado": "GAM-05"
+    },
+    {
+      "Id": "HU-GAM-06",
+      "Rol": "Admin",
+      "Historia": "Quiero configurar los criterios de cada logro para adaptar la gamificacion a mi academia.",
+      "Criterios de aceptacion": [
+        "El admin puede crear, editar y desactivar logros e insignias.",
+        "Puede configurar XP por tipo de actividad.",
+        "Los cambios aplican solo a actividades futuras, no retroactivamente."
+      ],
+      "RF relacionado": "GAM-06"
+    }
+  ],
+  "Flujos alternativos": {
+    "A1: Actividad ya completada anteriormente": "El sistema no otorga XP duplicado por la misma actividad.",
+    "A2: Empate en ranking": "Se desempata por orden de obtencion del XP (primero en alcanzar el puntaje).",
+    "A3: Logro desactivado por admin": "Los estudiantes conservan la insignia si ya la obtuvieron antes de la desactivacion."
+  },
+  "Postcondiciones": [
+    "El XP y nivel del estudiante se actualizan en tiempo real.",
+    "El ranking se recalcula con el nuevo XP.",
+    "Se genera notificacion si el estudiante sube de nivel u obtiene insignia."
+  ]
+}
+@endjson

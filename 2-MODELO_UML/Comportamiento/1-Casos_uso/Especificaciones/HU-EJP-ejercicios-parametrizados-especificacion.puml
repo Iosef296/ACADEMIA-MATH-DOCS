@@ -1,0 +1,170 @@
+@startjson
+{
+  "Modulo": "Motor de Ejercicios Parametrizados",
+  "Capa": "Capa 3 - Ejercicios Parametrizados (NUEVO)",
+  "Breve descripcion": "El sistema permite al profesor crear plantillas de ejercicios con parametros variables y al estudiante resolverlos con valores unicos generados dinamicamente, adaptados a su nivel, con pistas progresivas y verificacion automatica.",
+  "Actores primarios": "Profesor, Estudiante",
+  "Actores secundarios": "Admin, Motor de IA adaptativa",
+  "Precondiciones": [
+    "El profesor ha iniciado sesion y tiene un curso asignado.",
+    "El estudiante ha iniciado sesion y esta matriculado en el curso.",
+    "Los rangos y restricciones de parametros estan definidos."
+  ],
+  "Historias de usuario": [
+    {
+      "Id": "HU-EJP-01",
+      "Rol": "Profesor",
+      "Historia": "Quiero crear plantillas con parametros variables (ej: 'Calcular el MCD de {a} y {b}') para generar variantes infinitas sin crearlos uno a uno.",
+      "Criterios de aceptacion": [
+        "El editor permite insertar variables entre llaves: {a}, {b}, {n}.",
+        "El sistema valida que cada variable tenga un rango definido.",
+        "La plantilla soporta formulas LaTeX en el enunciado."
+      ],
+      "RF relacionado": "EJP-02"
+    },
+    {
+      "Id": "HU-EJP-02",
+      "Rol": "Profesor",
+      "Historia": "Quiero definir rangos y restricciones para cada parametro (ej: a debe ser primo, b en [10,50]) para controlar la dificultad de los ejercicios generados.",
+      "Criterios de aceptacion": [
+        "Permite rangos numericos, condiciones (primo, par, divisible por N).",
+        "El sistema valida que las restricciones no sean contradictorias.",
+        "Se puede previsualizar la distribucion de valores generados."
+      ],
+      "RF relacionado": "EJP-03"
+    },
+    {
+      "Id": "HU-EJP-03",
+      "Rol": "Profesor",
+      "Historia": "Quiero cargar el paso a paso oficial de solucion con formulas LaTeX para que los estudiantes tengan una referencia correcta del metodo de resolucion.",
+      "Criterios de aceptacion": [
+        "El editor del paso a paso soporta LaTeX para formulas.",
+        "El paso a paso puede incluir imagenes y texto explicativo.",
+        "Solo es visible al estudiante tras intentar resolver o al solicitarlo."
+      ],
+      "RF relacionado": "EJP-05"
+    },
+    {
+      "Id": "HU-EJP-04",
+      "Rol": "Profesor",
+      "Historia": "Quiero previsualizar las variantes generadas antes de publicar para verificar que los ejercicios tienen sentido matematico.",
+      "Criterios de aceptacion": [
+        "Se muestran al menos 5 variantes de ejemplo antes de publicar.",
+        "El sistema alerta si una variante genera valores no validos.",
+        "El profesor puede ajustar rangos desde la previsualizacion."
+      ],
+      "RF relacionado": "EJP-12"
+    },
+    {
+      "Id": "HU-EJP-05",
+      "Rol": "Profesor",
+      "Historia": "Quiero configurar pistas progresivas para guiar al estudiante paso a paso sin darle la solucion directamente.",
+      "Criterios de aceptacion": [
+        "Se pueden agregar hasta 5 niveles de pistas.",
+        "Cada pista puede incluir texto y formulas LaTeX.",
+        "El sistema registra cuantas pistas uso el estudiante."
+      ],
+      "RF relacionado": "EJP-07"
+    },
+    {
+      "Id": "HU-EJP-06",
+      "Rol": "Estudiante",
+      "Historia": "Quiero resolver ejercicios con valores distintos cada vez para practicar el mismo tipo de problema sin memorizar la respuesta.",
+      "Criterios de aceptacion": [
+        "Cada sesion de practica genera una variante nueva.",
+        "El sistema verifica la respuesta final automaticamente.",
+        "Los intentos quedan registrados en el historial."
+      ],
+      "RF relacionado": "EJP-01, EJP-10, EJP-11"
+    },
+    {
+      "Id": "HU-EJP-07",
+      "Rol": "Estudiante",
+      "Historia": "Quiero escribir mi propio paso a paso de resolucion en un editor matematico para desarrollar mi razonamiento.",
+      "Criterios de aceptacion": [
+        "El editor soporta LaTeX y simbolos matematicos.",
+        "El paso a paso del estudiante se guarda para revision del profesor.",
+        "El profesor puede dejar retroalimentacion sobre el paso a paso."
+      ],
+      "RF relacionado": "EJP-06"
+    },
+    {
+      "Id": "HU-EJP-08",
+      "Rol": "Estudiante",
+      "Historia": "Quiero acceder a pistas progresivas cuando no pueda resolver un ejercicio para avanzar sin rendirme.",
+      "Criterios de aceptacion": [
+        "Las pistas se revelan una a una, no todas a la vez.",
+        "El uso de pistas impacta en la puntuacion XP obtenida.",
+        "El acceso a pistas no bloquea la opcion de ver la solucion."
+      ],
+      "RF relacionado": "EJP-07, EJP-08"
+    },
+    {
+      "Id": "HU-EJP-09",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ver la solucion oficial paso a paso del docente despues de intentar resolver el ejercicio para entender el metodo correcto.",
+      "Criterios de aceptacion": [
+        "La solucion oficial es accesible en cualquier momento.",
+        "Se renderiza con LaTeX correctamente.",
+        "El sistema registra que el estudiante vio la solucion."
+      ],
+      "RF relacionado": "EJP-08"
+    },
+    {
+      "Id": "HU-EJP-10",
+      "Rol": "Estudiante",
+      "Historia": "Quiero que la dificultad de los parametros se adapte a mi nivel para recibir ejercicios que representen un reto adecuado.",
+      "Criterios de aceptacion": [
+        "El sistema analiza el historial de aciertos y errores.",
+        "La dificultad ajusta los rangos de parametros automaticamente.",
+        "El estudiante puede forzar un nivel de dificultad manualmente."
+      ],
+      "RF relacionado": "EJP-04, IAR-02"
+    },
+    {
+      "Id": "HU-EJP-11",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ver mi historial de intentos por cada tipo de ejercicio para medir mi progreso en cada area matematica.",
+      "Criterios de aceptacion": [
+        "El historial muestra fecha, resultado y dificultad de cada intento.",
+        "Se visualiza una grafica de evolucion por area.",
+        "El historial es exportable."
+      ],
+      "RF relacionado": "EJP-13"
+    },
+    {
+      "Id": "HU-EJP-12",
+      "Rol": "Estudiante",
+      "Historia": "Quiero repasar con flashcards generadas automaticamente para memorizar conceptos clave antes del examen.",
+      "Criterios de aceptacion": [
+        "Las flashcards se generan a partir de los ejercicios mas fallados.",
+        "Soportan formulas LaTeX en la pregunta y respuesta.",
+        "El sistema usa repeticion espaciada para la presentacion."
+      ],
+      "RF relacionado": "EJP-16"
+    },
+    {
+      "Id": "HU-EJP-13",
+      "Rol": "Admin",
+      "Historia": "Quiero que los ejercicios parametrizados se integren en los examenes para que cada estudiante reciba un simulacro unico.",
+      "Criterios de aceptacion": [
+        "Cada estudiante recibe valores unicos en el examen.",
+        "La calificacion considera la respuesta con los parametros asignados.",
+        "El sistema garantiza que no hay dos examenes iguales."
+      ],
+      "RF relacionado": "EJP-14"
+    }
+  ],
+  "Flujos alternativos": {
+    "A1: Parametros invalidos": "El sistema detecta valores que no cumplen las restricciones y regenera hasta obtener una variante valida.",
+    "A2: Editor LaTeX con error": "El sistema resalta el error en la formula y no permite guardar hasta corregirlo.",
+    "A3: Respuesta incorrecta": "El sistema informa el resultado, ofrece ver pistas o la solucion oficial.",
+    "A4: Sin conexion": "Los ejercicios descargados previamente estan disponibles offline; los intentos se sincronizan al reconectarse."
+  },
+  "Postcondiciones": [
+    "El intento queda registrado en el historial del estudiante.",
+    "La dificultad adaptativa se recalcula para el siguiente ejercicio.",
+    "El XP ganado se acredita segun rendimiento y uso de pistas."
+  ]
+}
+@endjson

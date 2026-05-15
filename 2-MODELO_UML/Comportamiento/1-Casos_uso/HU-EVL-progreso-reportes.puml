@@ -1,0 +1,47 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Profesor
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  package "Progreso y Rutinas" {
+    usecase "Ver porcentaje de avance por curso" as PRG01
+    usecase "Recibir plan de estudio semanal personalizado" as PRG02
+    usecase "Ver racha de dias de estudio" as PRG03
+    usecase "Definir metas de estudio" as PRG04
+    usecase "Recibir recordatorios de estudio" as PRG05
+    usecase "Ver calendario academico completo" as PRG06
+    usecase "Ver tiempo de estudio diario" as PRG07
+  }
+  package "Reportes y Analytics" {
+    usecase "Ver rendimiento de estudiantes por tema" as REP01
+    usecase "Ver ranking de estudiantes" as REP02
+    usecase "Exportar reportes en PDF o Excel" as REP03
+    usecase "Ver dashboard de metricas en tiempo real" as REP04
+    usecase "Ver tasa de error por tipo de ejercicio" as REP05
+    usecase "Ver rendimiento por ejercicio parametrizado" as REP06
+  }
+}
+
+Estudiante --> PRG01
+Estudiante --> PRG02
+Estudiante --> PRG03
+Estudiante --> PRG04
+Estudiante --> PRG05
+Estudiante --> PRG06
+Estudiante --> PRG07
+
+Profesor --> REP01
+Profesor --> REP02
+Profesor --> REP05
+Profesor --> REP06
+Admin --> REP03
+Admin --> REP04
+
+PRG02 ..> PRG04 : <<include>>
+PRG05 ..> PRG04 : <<include>>
+
+@enduml

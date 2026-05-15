@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  usecase "Registrarse con correo y contraseña" as AUT01
+  usecase "Iniciar sesion con Google (OAuth 2.0)" as AUT02
+  usecase "Verificar correo al registrarse" as AUT03
+  usecase "Recuperar contraseña por correo" as AUT04
+  usecase "Activar autenticacion 2FA" as AUT05
+  usecase "Cerrar sesion automaticamente por inactividad" as AUT06
+  usecase "Bloquear cuenta tras 5 intentos fallidos" as AUT07
+  usecase "Autenticar Usuario" as AUCX
+}
+
+Estudiante --> AUT01
+Estudiante --> AUT02
+Estudiante --> AUT03
+Estudiante --> AUT04
+Estudiante --> AUT05
+Admin --> AUT06
+Admin --> AUT07
+
+AUT01 ..> AUT03 : <<include>>
+AUT01 ..> AUCX : <<include>>
+AUT02 ..> AUCX : <<include>>
+
+@enduml

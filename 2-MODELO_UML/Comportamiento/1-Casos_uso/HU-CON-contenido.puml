@@ -1,0 +1,60 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Profesor
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  package "Temas y Ejercicios" {
+    usecase "Crear temas con texto, imagenes y LaTeX" as TEM01
+    usecase "Organizar contenido en cursos, unidades y temas" as TEM02
+    usecase "Adjuntar recursos descargables" as TEM03
+    usecase "Ver ejercicios resueltos paso a paso" as TEM04
+    usecase "Marcar tema como completado" as TEM05
+    usecase "Buscar contenido por palabra clave" as TEM06
+    usecase "Acceder al contenido sin internet" as TEM07
+  }
+  package "PDF y OCR" {
+    usecase "Subir PDFs de apuntes" as OCR01
+    usecase "Extraer texto automaticamente (OCR)" as OCR02
+    usecase "Convertir formulas escaneadas a LaTeX" as OCR03
+    usecase "Corregir texto extraido antes de publicar" as OCR04
+    usecase "Previsualizar PDF en la plataforma" as OCR05
+    usecase "Recibir notificacion cuando OCR termine" as OCR06
+  }
+  package "Banco de Preguntas" {
+    usecase "Crear preguntas con tipos variados" as BPR01
+    usecase "Asignar dificultad a cada pregunta" as BPR02
+    usecase "Buscar preguntas por categoria y tag" as BPR03
+    usecase "Importar preguntas desde Excel" as BPR04
+    usecase "Ver uso de preguntas en examenes" as BPR05
+  }
+}
+
+Profesor --> TEM01
+Profesor --> TEM02
+Profesor --> TEM03
+Estudiante --> TEM04
+Estudiante --> TEM05
+Estudiante --> TEM06
+Estudiante --> TEM07
+
+Profesor --> OCR01
+Profesor --> OCR04
+Profesor --> OCR06
+Estudiante --> OCR05
+
+Profesor --> BPR01
+Profesor --> BPR02
+Profesor --> BPR03
+Profesor --> BPR04
+Admin --> BPR05
+
+OCR01 ..> OCR02 : <<include>>
+OCR02 ..> OCR03 : <<include>>
+OCR02 ..> OCR06 : <<include>>
+OCR04 ..> OCR02 : <<extend>>
+
+@enduml

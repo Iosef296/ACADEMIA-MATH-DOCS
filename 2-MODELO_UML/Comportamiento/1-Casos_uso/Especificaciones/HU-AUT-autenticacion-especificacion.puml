@@ -1,0 +1,74 @@
+@startjson
+{
+  "Modulo": "Autenticacion",
+  "Capa": "Capa 1 - Acceso",
+  "Historias de usuario": [
+    {
+      "Id": "HU-AUT-01",
+      "Rol": "Estudiante",
+      "Historia": "Quiero registrarme con correo y contrasena para crear mi cuenta en la academia.",
+      "Criterios de aceptacion": [
+        "El formulario valida formato de correo y seguridad de contrasena.",
+        "Se envia correo de verificacion al registrarse.",
+        "El sistema no permite acceso hasta verificar el correo."
+      ],
+      "RF relacionado": "AUT-01, AUT-04"
+    },
+    {
+      "Id": "HU-AUT-02",
+      "Rol": "Estudiante",
+      "Historia": "Quiero iniciar sesion con Google para acceder rapidamente sin recordar contrasenoas.",
+      "Criterios de aceptacion": [
+        "El boton OAuth 2.0 de Google esta disponible en login.",
+        "Si el correo no esta registrado, crea la cuenta automaticamente.",
+        "El token de sesion tiene expiracion configurada."
+      ],
+      "RF relacionado": "AUT-03"
+    },
+    {
+      "Id": "HU-AUT-03",
+      "Rol": "Estudiante",
+      "Historia": "Quiero recuperar mi contrasena por correo para no perder el acceso a mi cuenta.",
+      "Criterios de aceptacion": [
+        "El enlace de recuperacion expira en 30 minutos.",
+        "Se muestra confirmacion al enviar el correo.",
+        "El sistema no revela si el correo existe o no (seguridad)."
+      ],
+      "RF relacionado": "AUT-05"
+    },
+    {
+      "Id": "HU-AUT-04",
+      "Rol": "Estudiante",
+      "Historia": "Quiero activar el 2FA para proteger mi cuenta ante accesos no autorizados.",
+      "Criterios de aceptacion": [
+        "El 2FA es opcional y configurable desde el perfil.",
+        "Soporta aplicaciones autenticadoras (TOTP).",
+        "Se proveen codigos de respaldo."
+      ],
+      "RF relacionado": "AUT-06"
+    },
+    {
+      "Id": "HU-AUT-05",
+      "Rol": "Admin",
+      "Historia": "Quiero que el sistema cierre sesion por inactividad para evitar accesos no deseados en dispositivos compartidos.",
+      "Criterios de aceptacion": [
+        "El tiempo de inactividad es configurable.",
+        "El sistema muestra aviso antes de cerrar la sesion.",
+        "Los datos no guardados se preservan o se alerta al usuario."
+      ],
+      "RF relacionado": "AUT-07"
+    },
+    {
+      "Id": "HU-AUT-06",
+      "Rol": "Admin",
+      "Historia": "Quiero que el sistema bloquee cuentas tras 5 intentos fallidos para proteger la plataforma de ataques de fuerza bruta.",
+      "Criterios de aceptacion": [
+        "El bloqueo es temporal (configurable) o permanente hasta desbloqueo manual.",
+        "El usuario recibe notificacion del bloqueo por correo.",
+        "El admin puede desbloquear cuentas manualmente."
+      ],
+      "RF relacionado": "AUT-08"
+    }
+  ]
+}
+@endjson

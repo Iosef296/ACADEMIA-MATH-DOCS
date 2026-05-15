@@ -1,0 +1,41 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Profesor
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  usecase "Crear examen seleccionando preguntas del banco" as EXA01
+  usecase "Configurar tiempo limite del examen" as EXA02
+  usecase "Calificar automaticamente el examen" as EXA03
+  usecase "Ver retroalimentacion tras el examen" as EXA04
+  usecase "Guardar progreso ante desconexion" as EXA05
+  usecase "Programar apertura y cierre del examen" as EXA06
+  usecase "Ver historial de examenes rendidos" as EXA07
+  usecase "Recibir certificado al aprobar un curso" as EXA08
+  usecase "Incluir ejercicios parametrizados en examen" as EXA09
+  usecase "Aleatorizar preguntas y alternativas" as ALEAT
+  usecase "Autenticar Usuario" as AUCX
+  usecase "Registrar Auditoria" as AUD
+}
+
+Profesor --> EXA01
+Profesor --> EXA02
+Profesor --> EXA09
+Admin --> EXA06
+Estudiante --> EXA03
+Estudiante --> EXA04
+Estudiante --> EXA05
+Estudiante --> EXA07
+Estudiante --> EXA08
+
+EXA01 ..> ALEAT : <<include>>
+EXA01 ..> EXA09 : <<extend>>
+EXA03 ..> AUCX : <<include>>
+EXA03 ..> AUD : <<include>>
+EXA03 ..> EXA05 : <<include>>
+EXA03 ..> EXA04 : <<include>>
+
+@enduml

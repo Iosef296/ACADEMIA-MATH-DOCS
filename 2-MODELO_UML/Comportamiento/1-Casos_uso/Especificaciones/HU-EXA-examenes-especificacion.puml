@@ -1,0 +1,126 @@
+@startjson
+{
+  "Modulo": "Examenes",
+  "Capa": "Capa 4 - Evaluacion",
+  "Breve descripcion": "El sistema permite al profesor crear examenes desde el banco de preguntas y al estudiante rendirlos con calificacion automatica, retroalimentacion y guardado de progreso.",
+  "Actores primarios": "Profesor, Estudiante",
+  "Actores secundarios": "Admin, Motor de Ejercicios Parametrizados",
+  "Precondiciones": [
+    "El profesor tiene al menos una pregunta en el banco.",
+    "El estudiante ha iniciado sesion y esta matriculado en el curso.",
+    "El examen esta publicado y en fecha de apertura activa."
+  ],
+  "Historias de usuario": [
+    {
+      "Id": "HU-EXA-01",
+      "Rol": "Profesor",
+      "Historia": "Quiero crear examenes seleccionando preguntas del banco para armar evaluaciones personalizadas.",
+      "Criterios de aceptacion": [
+        "El profesor puede filtrar preguntas por tema, dificultad y tipo.",
+        "El examen muestra el puntaje total y por seccion.",
+        "El orden de preguntas y alternativas se aleatoriza para cada estudiante."
+      ],
+      "RF relacionado": "EXA-01, EXA-05"
+    },
+    {
+      "Id": "HU-EXA-02",
+      "Rol": "Profesor",
+      "Historia": "Quiero configurar un tiempo limite para el examen para simular condiciones reales de admision EESPP.",
+      "Criterios de aceptacion": [
+        "El temporizador es visible durante el examen.",
+        "El sistema envia el examen automaticamente al agotar el tiempo.",
+        "Se muestra alerta cuando quedan 5 minutos."
+      ],
+      "RF relacionado": "EXA-02"
+    },
+    {
+      "Id": "HU-EXA-03",
+      "Rol": "Estudiante",
+      "Historia": "Quiero que el examen se califique automaticamente para conocer mi nota al instante.",
+      "Criterios de aceptacion": [
+        "La nota se calcula y muestra inmediatamente al enviar.",
+        "Las preguntas abiertas quedan pendientes de revision manual.",
+        "El resultado queda guardado en el historial."
+      ],
+      "RF relacionado": "EXA-03"
+    },
+    {
+      "Id": "HU-EXA-04",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ver la retroalimentacion tras el examen para entender mis errores y aprender de ellos.",
+      "Criterios de aceptacion": [
+        "Se muestra que preguntas respondio correctamente e incorrectamente.",
+        "Cada respuesta incorrecta muestra la explicacion del docente.",
+        "La retroalimentacion esta disponible despues del cierre del examen."
+      ],
+      "RF relacionado": "EXA-04, EXA-08"
+    },
+    {
+      "Id": "HU-EXA-05",
+      "Rol": "Estudiante",
+      "Historia": "Quiero que el progreso se guarde si me desconecto para no perder mis respuestas ante una falla de internet.",
+      "Criterios de aceptacion": [
+        "Las respuestas se guardan automaticamente cada 30 segundos.",
+        "Al reconectarse, el examen retoma desde donde quedo.",
+        "El temporizador continua contando aunque haya desconexion."
+      ],
+      "RF relacionado": "EXA-06"
+    },
+    {
+      "Id": "HU-EXA-06",
+      "Rol": "Admin",
+      "Historia": "Quiero programar la apertura y cierre del examen para controlar cuando pueden rendirlo los estudiantes.",
+      "Criterios de aceptacion": [
+        "Se configuran fecha y hora exactas de inicio y fin.",
+        "El sistema notifica al estudiante el dia anterior.",
+        "Fuera del periodo configurado el examen no es accesible."
+      ],
+      "RF relacionado": "EXA-09"
+    },
+    {
+      "Id": "HU-EXA-07",
+      "Rol": "Estudiante",
+      "Historia": "Quiero ver mi historial de examenes rendidos para comparar mi evolucion a lo largo del tiempo.",
+      "Criterios de aceptacion": [
+        "El historial incluye fecha, nota y tiempo empleado.",
+        "Se puede comparar notas entre intentos del mismo examen.",
+        "El historial es accesible desde el perfil del estudiante."
+      ],
+      "RF relacionado": "EXA-10"
+    },
+    {
+      "Id": "HU-EXA-08",
+      "Rol": "Estudiante",
+      "Historia": "Quiero recibir un certificado al aprobar un curso para tener un respaldo formal de mis logros academicos.",
+      "Criterios de aceptacion": [
+        "El certificado se genera en PDF descargable.",
+        "Incluye nombre del estudiante, curso, nota y fecha.",
+        "El certificado tiene un codigo de verificacion unico."
+      ],
+      "RF relacionado": "EXA-12"
+    },
+    {
+      "Id": "HU-EXA-09",
+      "Rol": "Profesor",
+      "Historia": "Quiero incluir ejercicios parametrizados en los examenes para que cada estudiante reciba variantes unicas y se evite el copiado.",
+      "Criterios de aceptacion": [
+        "Cada estudiante recibe valores de parametros diferentes.",
+        "La calificacion valida la respuesta segun los parametros asignados.",
+        "El sistema garantiza variantes distintas entre todos los estudiantes."
+      ],
+      "RF relacionado": "EJP-14, EXA-11"
+    }
+  ],
+  "Flujos alternativos": {
+    "A1: Desconexion durante el examen": "El sistema guarda las respuestas y permite retomar dentro del periodo activo.",
+    "A2: Tiempo agotado": "El sistema envia automaticamente las respuestas guardadas hasta ese momento.",
+    "A3: Examen fuera de fecha": "El sistema informa al estudiante que el examen no esta disponible y muestra las fechas configuradas.",
+    "A4: Fallo en calificacion automatica": "Las preguntas se marcan como pendientes y el profesor recibe notificacion."
+  },
+  "Postcondiciones": [
+    "El resultado queda registrado en el historial del estudiante.",
+    "Se actualiza el progreso del curso si el examen es aprobatorio.",
+    "Se genera un registro de auditoria de la sesion de examen."
+  ]
+}
+@endjson
