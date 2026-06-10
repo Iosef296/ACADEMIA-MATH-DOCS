@@ -1,0 +1,38 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  usecase "Ver planes y sus precios" as PAG01
+  usecase "Pagar con tarjeta de forma segura" as PAG02
+  usecase "Descargar comprobante de pago" as PAG03
+  usecase "Aplicar codigo de descuento" as PAG04
+  usecase "Recibir aviso de vencimiento de suscripcion" as PAG05
+  usecase "Ver historial de pagos" as PAG06
+  usecase "Configurar periodo de prueba gratuito" as PAG07
+  usecase "Matricularse en un curso especifico" as PAG08
+  usecase "Bloquear contenido premium si suscripcion vencida" as BLQ
+  usecase "Generar Comprobante" as GEN
+  usecase "Autenticar Usuario" as AUCX
+  usecase "Registrar Auditoria" as AUD
+}
+
+Estudiante --> PAG01
+Estudiante --> PAG02
+Estudiante --> PAG03
+Estudiante --> PAG04
+Estudiante --> PAG05
+Estudiante --> PAG08
+Admin --> PAG06
+Admin --> PAG07
+
+PAG02 ..> GEN : <<include>>
+PAG02 ..> AUCX : <<include>>
+PAG02 ..> AUD : <<include>>
+PAG02 ..> PAG04 : <<extend>>
+PAG02 ..> BLQ : <<extend>>
+
+@enduml
