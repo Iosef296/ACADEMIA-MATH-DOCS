@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  usecase "Ganar XP al completar temas y examenes" as GAM01
+  usecase "Ver ranking semanal y mensual" as GAM02
+  usecase "Ganar insignias por logros especificos" as GAM03
+  usecase "Subir de nivel al acumular XP" as GAM04
+  usecase "Ver insignias en el perfil" as GAM05
+  usecase "Configurar criterios de cada logro" as GAM06
+  usecase "Notificar al estudiante por logros" as GAM07
+  usecase "Registrar Auditoria" as AUD
+  usecase "Autenticar Usuario" as AUCX
+}
+
+Estudiante --> GAM01
+Estudiante --> GAM02
+Estudiante --> GAM03
+Estudiante --> GAM05
+Admin --> GAM06
+
+GAM01 ..> GAM04 : <<include>>
+GAM01 ..> GAM03 : <<extend>>
+GAM04 ..> GAM07 : <<include>>
+GAM03 ..> GAM07 : <<include>>
+GAM01 ..> AUD : <<include>>
+GAM01 ..> AUCX : <<include>>
+
+@enduml
