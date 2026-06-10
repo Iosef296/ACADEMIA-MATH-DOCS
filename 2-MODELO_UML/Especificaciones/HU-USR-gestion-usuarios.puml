@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  usecase "Crear, editar y desactivar cuentas" as USR01
+  usecase "Asignar roles a usuarios" as USR02
+  usecase "Buscar usuarios por nombre, correo o rol" as USR03
+  usecase "Editar perfil con foto y bio" as USR04
+  usecase "Registrar fecha de ultimo acceso" as USR05
+  usecase "Gestionar apoderados de estudiantes menores" as USR06
+  usecase "Autenticar Usuario" as AUCX
+}
+
+Admin --> USR01
+Admin --> USR02
+Admin --> USR03
+Admin --> USR05
+Admin --> USR06
+Estudiante --> USR04
+
+USR01 ..> AUCX : <<include>>
+USR04 ..> AUCX : <<include>>
+
+@enduml
