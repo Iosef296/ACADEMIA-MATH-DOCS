@@ -1,0 +1,98 @@
+@startuml HU-CON-contenido
+
+left to right direction
+
+title Modulo de Temas y Ejercicios
+
+skinparam backgroundColor #1A1A2E
+skinparam actor {
+    BackgroundColor #FF9900
+    BorderColor #FF6600
+    FontColor #FFFFFF
+}
+skinparam usecase {
+    BackgroundColor #232F3E
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam package {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FF9900
+}
+skinparam arrowColor #FF9900
+skinparam note {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam legend {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+
+actor "Estudiante" as EST
+actor "Profesor" as PROF
+actor "Administrador" as ADM
+
+package "Academia Virtual de Matematicas" {
+    package "Temas y Ejercicios" {
+
+        usecase "Crear temas con\ntexto, imagenes y LaTeX" as TEM01
+
+        usecase "Organizar contenido en\ncursos, unidades y temas" as TEM02
+
+        usecase "Adjuntar recursos\ndescargables" as TEM03
+
+        usecase "Ver ejercicios resueltos\npaso a paso" as TEM04
+
+        usecase "Marcar tema como\ncompletado" as TEM05
+
+        usecase "Buscar contenido por\npalabra clave" as TEM06
+
+        usecase "Acceder al contenido\nsin internet (offline)" as TEM07
+    }
+}
+
+EST --> TEM04
+EST --> TEM05
+EST --> TEM06
+EST --> TEM07
+
+PROF --> TEM01
+PROF --> TEM02
+PROF --> TEM03
+
+ADM --> TEM02
+
+TEM01 ..> TEM02 : <<include>>
+TEM04 ..> TEM05 : <<include>>
+TEM06 ..> TEM07 : <<extend>>
+TEM03 ..> TEM07 : <<extend>>
+
+note right of TEM01
+  El profesor puede crear temas usando:
+  - Texto enriquecido con editor WYSIWYG
+  - Imagenes y diagramas
+  - Formulas matematicas en LaTeX
+end note
+
+note right of TEM04
+  Los ejercicios resueltos muestran:
+  - Desarrollo paso a paso
+  - Justificacion de cada paso
+  - Consejos y estrategias de resolucion
+end note
+
+legend right
+
+| |= LEYENDA | |
+| --> | Asociacion actor -> caso de uso |
+| ..> | Dependencia UML |
+| <<include>> | Flujo obligatorio |
+| <<extend>> | Flujo alternativo |
+
+endlegend
+
+@enduml

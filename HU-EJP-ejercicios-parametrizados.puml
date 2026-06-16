@@ -1,0 +1,157 @@
+@startuml HU-EJP-ejercicios-parametrizados
+
+left to right direction
+
+title Modulo de Ejercicios Parametrizados (EJP)
+
+skinparam backgroundColor #1A1A2E
+skinparam actor {
+    BackgroundColor #FF9900
+    BorderColor #FF6600
+    FontColor #FFFFFF
+}
+skinparam usecase {
+    BackgroundColor #232F3E
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam package {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FF9900
+}
+skinparam arrowColor #FF9900
+skinparam note {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam legend {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+
+actor "Estudiante" as EST
+actor "Profesor" as PROF
+actor "Administrador" as ADM
+
+package "Academia Virtual de Matematicas" {
+    package "Ejercicios Parametrizados" {
+
+        ' --- GESTION DE PLANTILLAS (Profesor) ---
+        usecase "Crear plantillas con\nparametros variables" as EJP01
+
+        usecase "Definir rangos y\nrestricciones de parametros" as EJP02
+
+        usecase "Cargar paso a paso\noficial con LaTeX" as EJP03
+
+        usecase "Previsualizar variantes\nantes de publicar" as EJP04
+
+        usecase "Configurar pistas\nprogresivas" as EJP05
+
+        ' --- RESOLUCION DE EJERCICIOS (Estudiante) ---
+        usecase "Resolver ejercicios con\nvalores distintos" as EJP06
+
+        usecase "Escribir paso a paso\nde resolucion" as EJP07
+
+        usecase "Acceder a pistas\nprogresivas" as EJP08
+
+        usecase "Ver solucion oficial\npaso a paso" as EJP09
+
+        usecase "Ver historial de\nintentos por ejercicio" as EJP12
+
+        usecase "Repasar con flashcards\nautomaticas" as EJP13
+
+        ' --- PROCESOS INTERNOS DEL SISTEMA ---
+        usecase "Verificacion automatica\nde respuesta" as EJP10 #4A5568
+
+        usecase "Adaptar dificultad segun\nnivel del estudiante" as EJP11 #4A5568
+
+        ' --- INTEGRACION Y ADMINISTRACION ---
+        usecase "Integrar ejercicios\nparametrizados en examenes" as EJP14
+    }
+}
+
+' --- RELACIONES ACTOR -> CASO DE USO ---
+PROF --> EJP01
+PROF --> EJP02
+PROF --> EJP03
+PROF --> EJP04
+PROF --> EJP05
+
+EST --> EJP06
+EST --> EJP07
+EST --> EJP08
+EST --> EJP09
+EST --> EJP12
+EST --> EJP13
+
+ADM --> EJP14
+
+' --- RELACIONES <<include>> ---
+EJP01 ..> EJP02 : <<include>>
+EJP01 ..> EJP03 : <<include>>
+
+EJP06 ..> EJP10 : <<include>>
+EJP06 ..> EJP11 : <<include>>
+
+EJP14 ..> EJP11 : <<include>>
+
+' --- RELACIONES <<extend>> ---
+EJP08 ..> EJP09 : <<extend>>
+EJP07 ..> EJP09 : <<extend>>
+
+EJP12 ..> EJP13 : <<extend>>
+
+' --- NOTAS EXPLICATIVAS ---
+note right of EJP01
+  El profesor define una plantilla matematica
+  con parametros variables, por ejemplo:
+  "Resolver la ecuacion ax^2 + bx + c = 0"
+  donde a, b, c son parametros aleatorios
+  dentro de rangos definidos.
+end note
+
+note right of EJP10
+  El sistema verifica la respuesta del estudiante
+  comparando con la solucion oficial generada
+  a partir de los mismos parametros.
+end note
+
+note right of EJP11
+  La adaptacion de dificultad ajusta:
+  - Rango de valores (enteros -> decimales)
+  - Cantidad de pasos intermedios
+  - Complejidad de las formulas
+end note
+
+note right of EJP13
+  Las flashcards se generan automaticamente
+  a partir de los ejercicios que el estudiante
+  fallo o tardo en resolver.
+end note
+
+' --- LEYENDA ---
+legend right
+
+| |= LEYENDA - Ejercicios Parametrizados | |
+
+|= Color de caso de uso |= Tipo |
+| Naranja oscuro | Interaccion directa del usuario |
+| Gris azulado | Proceso interno automatico del sistema |
+
+|= Relacion |= Significado |
+| --> | Asociacion actor -> caso de uso |
+| ..> | Dependencia UML |
+| <<include>> | Flujo obligatorio |
+| <<extend>> | Flujo alternativo / condicional |
+
+|= Actor |= Rol |
+| Estudiante | Resuelve ejercicios y recibe retroalimentacion |
+| Profesor | Crea plantillas, define parametros y soluciones |
+| Administrador | Integra ejercicios con otros modulos del sistema |
+
+endlegend
+
+@enduml

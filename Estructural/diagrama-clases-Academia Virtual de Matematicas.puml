@@ -1,0 +1,589 @@
+@startuml
+title Diagrama de Clases - Academia Virtual de Matematicas
+
+skinparam backgroundColor #F5F5F5
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #333333
+    FontColor #333333
+}
+skinparam enum {
+    BackgroundColor #FFF8E1
+    BorderColor #FF8F00
+    FontColor #333333
+}
+
+' ============================================
+' ENUMS
+' ============================================
+enum Rol {
+    ESTUDIANTE
+    PROFESOR
+    ADMINISTRADOR
+    APODERADO
+}
+
+enum Nivel {
+    BASICO
+    INTERMEDIO
+    AVANZADO
+    EXPERTO
+}
+
+enum TipoVariante {
+    NUMERICA
+    ALGEBRAICA
+    GRAFICA
+    ALEATORIA
+}
+
+enum EstadoAnimo {
+    MOTIVADO
+    NEUTRAL
+    FRUSTRADO
+    AGOTADO
+}
+
+enum EstadoTema {
+    BLOQUEADO
+    DESBLOQUEADO
+    EN_PROGRESO
+    COMPLETADO
+}
+
+' ============================================
+' CLASES ABSTRACTAS
+' ============================================
+abstract class Usuario {
+    - id: UUID
+    - nombre: String
+    - correo: String
+    - password: String
+    - foto: String
+    - activo: boolean
+    - fechaRegistro: DateTime
+    - ultimoAcceso: DateTime
+    --
+    + iniciarSesion(): Token
+    + cerrarSesion(): void
+    + cambiarPassword(nueva: String): void
+    + actualizarPerfil(): void
+}
+
+' ============================================
+' USUARIOS ESPECIFICOS
+' ============================================
+class Estudiante {
+    - puntos: int
+    - nivel: int
+    - racha: int
+    - estadoAnimo: EstadoAnimo
+    --
+    + resolverEjercicio(ejercicio: Ejercicio): Respuesta
+    + rendirExamen(examen: Examen): Resultado
+    + publicarEnForo(mensaje: String): void
+    + canjearRecompensa(recompensa: Recompensa): void
+    + seleccionarArea(area: String): void
+}
+
+class Profesor {
+    - especialidad: String
+    - cursosActivos: int
+    - calificacionPromedio: float
+    --
+    + crearEjercicio(): Ejercicio
+    + crearExamen(): Examen
+    + generarPDF(): Documento
+    + moderarForo(): void
+    + revisarExamen(): void
+}
+
+class Administrador {
+    --
+    + gestionarUsuarios(): void
+    + configurarSistema(): void
+    + verAuditoria(): void
+    + generarReporte(): void
+}
+
+Usuario <|-- Estudiante : es un
+Usuario <|-- Profesor : es un
+Usuario <|-- Administrador : es un
+
+Usuario --> Rol : tiene >
+
+' ============================================
+' CONTENIDO EDUCATIVO
+' ============================================
+class Curso {
+    - id: UUID
+    - titulo: String
+    - descripcion: String
+    - area: String
+    - nivel: Nivel
+    - activo: boolean
+    --
+    + agregarTema(tema: Tema): void
+    + ordenarTemas(): void
+    + publicar(): void
+    + archivar(): void
+}
+
+class Tema {
+    - id: UUID
+    - titulo: String
+    - orden: int
+    - contenido: String
+    - nivel: Nivel
+    - bloqueado: boolean
+    --
+    + desbloquear(): void
+    + estaCompleto(): boolean
+    + agregarEjercicio(ej: Ejercicio): void
+    + agregarRecurso(recurso: Recurso): void
+}
+
+class Recurso {
+    - id: UUID
+    - titulo: String
+    - tipo: String
+    - url: String
+    - tamano: int
+    --
+    + descargar(): void
+    + previsualizar(): void
+}
+
+Curso "1" o-- "0..*" Tema : contiene
+Tema "1" o-- "0..*" Recurso : tiene
+
+' ============================================
+' EJERCICIOS PARAMETRIZADOS
+' ============================================
+class Ejercicio {
+    - id: UUID
+    - enunciado: String
+    - dificultad: Nivel
+    - tieneVariantes: boolean
+    - parametros: Map<String, Rango>
+    - solucionLaTeX: String
+    - pistas: List<String>
+    --
+    + generarVariante(): Variante
+    + obtenerPasos(): List<String>
+    + validarRespuesta(respuesta: String): boolean
+    + adaptarDificultad(nivel: Nivel): void
+}
+
+class Variante {
+    - id: UUID
+    - tipo: TipoVariante
+    - valoresGenerados: Map<String, float>
+    - enunciadoRenderizado: String
+    --
+    + generarValores(): void
+    + validar(respuesta: String): boolean
+    + mostrar(): String
+    + renderizarLaTeX(): String
+}
+
+class Rango {
+    - minimo: float
+    - maximo: float
+    - decimales: int
+    - excluidos: List<float>
+    --
+    + generarValor(): float
+    + validar(valor: float): boolean
+}
+
+Ejercicio "1" --> "0..*" Variante : genera
+Ejercicio "1" --> "0..*" Rango : define
+Variante --> TipoVariante : es de
+Ejercicio --> Nivel : tiene
+
+Tema "1" o-- "0..*" Ejercicio : contiene
+
+' ============================================
+' RESPUESTAS Y SEGUIMIENTO
+' ============================================
+class Respuesta {
+    - id: UUID
+    - valorIngresado: String
+    - esCorrecta: boolean
+    - tiempoSegundos: int
+    - intentos: int
+    - fecha: DateTime
+    - pistasUsadas: int
+    --
+    + verificar(): boolean
+    + registrarIntento(): void
+    + calcularPuntaje(): int
+}
+
+class Resultado {
+    - id: UUID
+    - puntaje: float
+    - porcentaje: float
+    - tiempoTotal: int
+    - aprobado: boolean
+    - fecha: DateTime
+    --
+    + generarCertificado(): void
+    + compararConPromedio(): void
+}
+
+Estudiante "1" --> "0..*" Respuesta : envia
+Respuesta "*" --> "1" Variante : resuelve
+Respuesta "*" --> "1" Ejercicio : referencia
+
+' ============================================
+' EXAMENES
+' ============================================
+class Examen {
+    - id: UUID
+    - titulo: String
+    - duracion: int
+    - adaptativo: boolean
+    - fechaInicio: DateTime
+    - fechaFin: DateTime
+    - cantidadPreguntas: int
+    - puntajeAprobacion: float
+    --
+    + agregarPregunta(pregunta: Ejercicio): void
+    + iniciar(): void
+    + finalizar(): void
+    + corregir(): Resultado
+    + obtenerResultados(): List<Resultado>
+}
+
+class BancoPreguntas {
+    - id: UUID
+    - nombre: String
+    - categoria: String
+    - tags: List<String>
+    --
+    + agregarPregunta(pregunta: Ejercicio): void
+    + buscarPorTag(tag: String): List<Ejercicio>
+    + generarExamenAleatorio(n: int): Examen
+}
+
+Examen "1" o-- "1..*" Ejercicio : contiene
+Examen "1" --> "0..*" Resultado : genera
+Profesor "1" --> "0..*" Examen : crea
+Estudiante "1" --> "0..*" Resultado : obtiene
+BancoPreguntas "1" o-- "0..*" Ejercicio : almacena
+
+' ============================================
+' PROGRESO Y RUTINAS
+' ============================================
+class Progreso {
+    - id: UUID
+    - puntos: int
+    - racha: int
+    - fechaUltima: DateTime
+    - nivel: int
+    - porcentajeAvance: float
+    --
+    + actualizarRacha(): void
+    + subirNivel(): void
+    + calcularAvance(): float
+    + registrarEstadoAnimo(animo: EstadoAnimo): void
+}
+
+class PlanEstudio {
+    - id: UUID
+    - fechaInicio: DateTime
+    - fechaFin: DateTime
+    - objetivos: List<String>
+    - horasDiarias: int
+    --
+    + generarRuta(): List<Tema>
+    + ajustarPorDesempeno(): void
+    + notificarRecordatorio(): void
+}
+
+Estudiante "1" --> "0..*" Progreso : tiene
+Progreso "*" --> "1" Tema : registra
+Progreso --> EstadoAnimo : tiene
+
+Estudiante "1" --> "0..*" PlanEstudio : sigue
+PlanEstudio "1" --> "0..*" Tema : incluye
+
+' ============================================
+' GAMIFICACION
+' ============================================
+class Insignia {
+    - id: UUID
+    - nombre: String
+    - descripcion: String
+    - condicion: String
+    - icono: String
+    - nivel: int
+    - exclusiva: boolean
+    --
+    + otorgar(estudiante: Estudiante): void
+    + verificarCondicion(est: Estudiante): boolean
+    + mostrarRareza(): String
+}
+
+class Recompensa {
+    - id: UUID
+    - nombre: String
+    - descripcion: String
+    - costoPuntos: int
+    - tipo: String
+    - cantidadDisponible: int
+    --
+    + canjear(estudiante: Estudiante): boolean
+    + verificarDisponibilidad(): boolean
+    + aplicarDescuento(porcentaje: float): void
+}
+
+class Logro {
+    - id: UUID
+    - nombre: String
+    - criterio: String
+    - progresoActual: int
+    - progresoMaximo: int
+    --
+    + actualizarProgreso(valor: int): void
+    + estaCompletado(): boolean
+    + otorgarRecompensa(): void
+}
+
+Estudiante "1" --> "0..*" Insignia : gana
+Estudiante "1" --> "0..*" Logro : tiene
+Estudiante "1" --> "0..*" Recompensa : canjea
+
+' ============================================
+' IA Y RECOMENDACIONES
+' ============================================
+class MotorIA {
+    - id: UUID
+    - modelo: String
+    - version: String
+    - ultimoEntrenamiento: DateTime
+    --
+    + analizarDebilidades(est: Estudiante): List<Tema>
+    + recomendarEjercicio(est: Estudiante): Ejercicio
+    + ajustarDificultad(ej: Ejercicio, est: Estudiante): Nivel
+    + predecirNota(est: Estudiante, examen: Examen): float
+    + generarResumenSemanal(est: Estudiante): String
+}
+
+class AsistenteIA {
+    - id: UUID
+    - nombre: String
+    - contexto: String
+    - historial: List<String>
+    --
+    + responderPregunta(pregunta: String): String
+    + explicarEjercicio(ej: Ejercicio): String
+    + sugerirTemaSiguiente(est: Estudiante): Tema
+    + escalarADocente(): void
+}
+
+MotorIA "1" --> "0..*" Estudiante : analiza
+MotorIA "1" --> "0..*" Ejercicio : recomienda
+AsistenteIA "1" --> "0..*" Estudiante : asiste
+
+' ============================================
+' FORO Y COMUNICACION
+' ============================================
+class Publicacion {
+    - id: UUID
+    - titulo: String
+    - contenido: String
+    - fecha: DateTime
+    - votos: int
+    - resuelta: boolean
+    --
+    + votar(usuario: Usuario): void
+    + marcarComoResuelta(): void
+    + adjuntarImagen(url: String): void
+}
+
+class RespuestaForo {
+    - id: UUID
+    - contenido: String
+    - fecha: DateTime
+    - votos: int
+    - esOficial: boolean
+    --
+    + votar(usuario: Usuario): void
+    + marcarComoCorrecta(): void
+}
+
+Publicacion "1" o-- "0..*" RespuestaForo : tiene
+Usuario "1" --> "0..*" Publicacion : publica
+Usuario "1" --> "0..*" RespuestaForo : responde
+
+' ============================================
+' NOTIFICACIONES
+' ============================================
+class Notificacion {
+    - id: UUID
+    - titulo: String
+    - mensaje: String
+    - tipo: String
+    - leida: boolean
+    - fechaEnvio: DateTime
+    - fechaExpiracion: DateTime
+    --
+    + enviar(): void
+    + marcarLeida(): void
+    + programar(): void
+}
+
+Usuario "1" --> "0..*" Notificacion : recibe
+
+' ============================================
+' PAGOS Y SUSCRIPCIONES
+' ============================================
+class Plan {
+    - id: UUID
+    - nombre: String
+    - descripcion: String
+    - precio: float
+    - duracionDias: int
+    - beneficios: List<String>
+    - activo: boolean
+    --
+    + aplicarDescuento(codigo: String): void
+    + compararCon(otro: Plan): int
+}
+
+class Suscripcion {
+    - id: UUID
+    - fechaInicio: DateTime
+    - fechaFin: DateTime
+    - estado: String
+    - renovacionAutomatica: boolean
+    --
+    + activar(): void
+    + pausar(): void
+    + cancelar(): void
+    + renovar(): void
+    + verificarVencimiento(): boolean
+}
+
+class Pago {
+    - id: UUID
+    - monto: float
+    - metodo: String
+    - estado: String
+    - fecha: DateTime
+    - comprobante: String
+    --
+    + procesar(): boolean
+    + reembolsar(): boolean
+    + generarComprobante(): void
+    + descargarComprobante(): void
+}
+
+Estudiante "1" --> "0..*" Suscripcion : tiene
+Suscripcion "*" --> "1" Plan : corresponde a
+Suscripcion "1" --> "0..*" Pago : genera
+
+' ============================================
+' CLASES EN VIVO
+' ============================================
+class SalaVirtual {
+    - id: UUID
+    - nombre: String
+    - capacidad: int
+    - fechaInicio: DateTime
+    - duracion: int
+    - grabacion: String
+    - activa: boolean
+    --
+    + iniciar(): void
+    + finalizar(): void
+    + compartirPantalla(): void
+    + grabar(): void
+    + generarSalaBreakout(): SalaVirtual
+}
+
+class Chat {
+    - id: UUID
+    - mensajes: List<String>
+    - moderado: boolean
+    --
+    + enviarMensaje(usuario: Usuario, msg: String): void
+    + silenciarUsuario(usuario: Usuario): void
+    + exportarTranscripcion(): String
+}
+
+Profesor "1" --> "0..*" SalaVirtual : crea
+Estudiante "1" --> "0..*" SalaVirtual : accede
+SalaVirtual "1" --> "1" Chat : tiene
+
+' ============================================
+' PDF Y OCR
+' ============================================
+class Documento {
+    - id: UUID
+    - titulo: String
+    - tipo: String
+    - url: String
+    - tamano: int
+    - fechaSubida: DateTime
+    --
+    + previsualizar(): void
+    + descargar(): void
+    + compartir(): void
+}
+
+class OCR {
+    - id: UUID
+    - estado: String
+    - textoExtraido: String
+    - confianza: float
+    - fechaProcesamiento: DateTime
+    --
+    + procesar(documento: Documento): void
+    + extraerFormulas(): List<String>
+    + convertirALaTeX(): String
+    + corregirTexto(correcciones: Map): void
+}
+
+Documento "1" --> "0..1" OCR : procesa
+Profesor "1" --> "0..*" Documento : sube
+
+' ============================================
+' CONFIGURACION Y AUDITORIA
+' ============================================
+class Configuracion {
+    - id: UUID
+    - clave: String
+    - valor: String
+    - categoria: String
+    - editable: boolean
+    --
+    + cargar(): void
+    + guardar(): void
+    + validar(): boolean
+    + aplicar(): void
+}
+
+class Auditoria {
+    - id: UUID
+    - fechaHora: DateTime
+    - accion: String
+    - modulo: String
+    - descripcion: String
+    - ipOrigen: String
+    - usuarioId: UUID
+    - resultado: String
+    --
+    + registrarEvento(): void
+    + generarTraza(): String
+    + exportarCSV(): void
+    + filtrarPorFecha(inicio: Date, fin: Date): List<<Auditoria>
+}
+
+Usuario "1" --> "0..*" Auditoria : genera
+Administrador "1" --> "0..*" Configuracion : gestiona
+
+@enduml
