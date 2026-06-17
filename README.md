@@ -1,3 +1,0 @@
-# ACADEMIA VIRTUAL DE MATEMATICAS 
- 
-Emerson Avance 

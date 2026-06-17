@@ -1,0 +1,40 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Digitalizacion de PDF con OCR",
+  "Id": "CU-14",
+  "Breve descripcion": "El profesor sube documentos PDF escaneados o fotografiados; el sistema extrae texto automaticamente mediante OCR, reconoce y convierte formulas matematicas a codigo LaTeX, permite correccion interactiva y publica el contenido como material educativo editable y buscable.",
+  "Actores primarios": "Profesor",
+  "Actores secundarios": "Motor OCR (Tesseract/Mathpix), Parser de Formulas LaTeX, Servicio de Almacenamiento en Cloud, Servicio de Notificaciones, Renderizador LaTeX",
+  "Precondiciones": [
+    "El profesor tiene permisos de creacion de contenido en el curso destino.",
+    "El archivo PDF no excede el tamano maximo permitido (50MB) y las paginas escaneadas tienen resolucion minima de 300 DPI para OCR optimo.",
+    "El modulo OCR esta activo en configuracion y el motor tiene soporte entrenado para caracteres matematicos, simbolos griegos y notacion cientifica."
+  ],
+  "Flujo principal": {
+    "1": "El profesor accede al modulo 'PDF y OCR' desde el dashboard docente.",
+    "2": "El profesor selecciona y sube el archivo PDF desde su dispositivo local o desde almacenamiento en la nube vinculado.",
+    "3": "El sistema valida formato (PDF), tamano del archivo, calidad de imagen de las paginas escaneadas y numero maximo de paginas permitido por proceso.",
+    "4": "El sistema encola el archivo para procesamiento OCR asincrono y muestra al profesor: 'Procesando... tiempo estimado: X minutos' con barra de progreso.",
+    "5": "El motor OCR extrae texto plano de todas las paginas del documento, manteniendo la estructura de parrafos, tablas y listas detectadas.",
+    "6": "El parser especializado de formulas identifica expresiones matematicas, ecuaciones, matrices y simbolos cientificos, convirtiendolos automaticamente a codigo LaTeX equivalente.",
+    "7": "El sistema genera una vista previa lado a lado: imagen original de la pagina escaneada vs texto y formulas LaTeX extraidos, con indicador de confianza del OCR por bloque.",
+    "8": "El profesor revisa pagina por pagina, corrige errores de OCR detectados, edita formulas LaTeX si el parser no reconocio correctamente, y ajusta formato de tablas y estructura.",
+    "9": "El profesor aprueba la extraccion completa y selecciona la accion final: publicar como tema nuevo independiente, agregar como seccion a un tema existente, o guardar como borrador para edicion posterior.",
+    "10": "El sistema publica el contenido procesado, lo indexa para busqueda interna, lo vincula al curso seleccionado y notifica a estudiantes matriculados sobre nuevo material disponible."
+  },
+  "Postcondiciones": [
+    "El contenido escaneado queda disponible como texto completamente editable, buscable y accesible.",
+    "Las formulas matematicas son renderizables en el visualizador LaTeX de la plataforma y se visualizan correctamente en todos los dispositivos.",
+    "El PDF original se conserva como archivo adjunto descargable para referencia y comparacion.",
+    "El contenido extraido es indexado por el motor de busqueda interna y referenciable por el asistente IA."
+  ],
+  "Flujos alternativos": {
+    "A1: Calidad de escaneo insuficiente": "El sistema detecta resolucion baja o contraste deficiente, notifica error especifico pagina por pagina y sugiere reescanear el documento con mayor resolucion (minimo 300 DPI) y mejor iluminacion.",
+    "A2: Formula compleja no reconocida por el parser": "El sistema marca la formula en rojo con indicador de baja confianza, requiere edicion manual obligatoria del profesor antes de poder publicar, y ofrece sugerencias de codigo LaTeX basadas en simbolos detectados parcialmente.",
+    "A3: Proceso interrumpido por el profesor": "El profesor puede pausar la revision, guardar el progreso actual en estado borrador y continuar posteriormente desde el punto exacto donde detuvo la revision.",
+    "A4: Carga multiple de PDFs en lote": "El sistema permite seleccionar y subir multiples archivos PDF simultaneamente, los encola para procesamiento secuencial con prioridad configurable, y notifica al profesor cuando cada uno finaliza.",
+    "A5: Exportacion del contenido extraido": "El profesor puede descargar el contenido procesado como documento Word (.docx), codigo LaTeX puro (.tex) o HTML para edicion externa antes de publicar en la plataforma.",
+    "A6: OCR de idioma no soportado": "Si el documento contiene texto en idioma no soportado por el motor OCR configurado, el sistema detecta automaticamente el idioma, notifica la limitacion y permite continuar con extraccion parcial o cancelar."
+  }
+}
+@endjson

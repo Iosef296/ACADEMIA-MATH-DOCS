@@ -1,0 +1,40 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Inteligencia Artificial y Recomendaciones Personalizadas",
+  "Id": "CU-11",
+  "Breve descripcion": "El sistema utiliza inteligencia artificial para recomendar ejercicios personalizados, ajustar dinamicamente la dificultad, responder dudas en lenguaje natural, predecir desempeno academico y generar planes de estudio adaptativos unicos por estudiante.",
+  "Actores primarios": "Estudiante, Profesor",
+  "Actores secundarios": "Motor de Recomendacion Colaborativo, Modelo LLM Especializado, Analizador de Patrones de Error, Predictor de Desempeno, Sistema de NLP Matematico",
+  "Precondiciones": [
+    "El estudiante tiene historial minimo de 5 ejercicios resueltos para que las recomendaciones sean estadisticamente significativas.",
+    "El modulo de IA esta activo en configuracion y el modelo LLM ha sido entrenado con curriculum de matematicas universitarias y secundarias.",
+    "El profesor tiene acceso al dashboard de supervision de IA y alertas pedagogicas."
+  ],
+  "Flujo principal": {
+    "1": "El estudiante accede al modulo 'IA y Recomendaciones' o interactua con el asistente virtual desde cualquier pantalla de la plataforma.",
+    "2": "Para recomendacion de ejercicios: el sistema (Motor de Recomendacion) analiza el historial completo de errores del estudiante agrupados por area tematica (algebra, calculo, estadistica, geometria, etc.).",
+    "3": "El sistema identifica areas debiles con tasa de error superior al 40% y genera ejercicios EJP enfocados especificamente en reforzar esas areas de conocimiento.",
+    "4": "Para ajuste adaptativo de dificultad: el sistema evalua la racha reciente de aciertos; si mayor al 80% en 5 ejercicios consecutivos, aumenta dificultad; si menor al 60%, reduce dificultad manteniendo la misma area tematica.",
+    "5": "Para asistente IA: el estudiante escribe su duda en lenguaje natural (español o ingles); el sistema (LLM Service) procesa la consulta con NLP especializado en terminologia matematica.",
+    "6": "El asistente IA responde con explicacion paso a paso, sugiere conceptos previos necesarios, proporciona ejemplos analogos y nunca revela la respuesta final directamente para fomentar el aprendizaje activo.",
+    "7": "Si la duda es demasiado compleja, ambigua o el LLM no puede resolver con confianza suficiente: el sistema escala automaticamente al profesor asignado incluyendo el contexto completo de la conversacion y el historial del estudiante.",
+    "8": "Para plan de estudio personalizado: el sistema genera una ruta semanal optimizada basada en metas del estudiante, examenes proximos, ritmo historico de aprendizaje, prerequisitos pendientes y tiempo disponible declarado.",
+    "9": "Para prediccion de desempeno: el sistema proyecta la nota probable en examenes finales basado en desempeno historico, patrones de estudio y comparativa estadistica con cohortes anteriores similares.",
+    "10": "El profesor revisa el dashboard de alertas de IA: estudiantes identificados en riesgo de desercion, patrones de error recurrentes en toda la cohorte, y sugerencias especificas de intervencion pedagogica temprana."
+  },
+  "Postcondiciones": [
+    "El estudiante recibe contenido y ejercicios adaptados precisamente a su nivel actual y necesidades especificas de mejora.",
+    "El profesor tiene informacion accionable y cuantificada para realizar intervencion pedagogica temprana antes de que el estudiante falle.",
+    "El modelo LLM mejora continuamente mediante feedback implicito (tiempo de lectura, valoracion de utilidad) y explicito (reporte de error en respuesta) de los usuarios.",
+    "El sistema mantiene un registro de todas las interacciones con IA para auditoria de calidad y mejora del modelo."
+  ],
+  "Flujos alternativos": {
+    "A1: Datos insuficientes para recomendacion precisa": "El sistema muestra ejercicios genericos de nivel intermedio ampliamente recomendados hasta que el estudiante acumule historial suficiente (minimo 5 ejercicios) para personalizar.",
+    "A2: Respuesta de IA incorrecta o alucinacion": "El estudiante reporta la respuesta como incorrecta; el sistema marca la interaccion para revision por el equipo pedagogico, excluye la respuesta del reentrenamiento y ofrece disculpa con credito de XP compensatorio.",
+    "A3: Sesgo detectado en respuestas del modelo": "El administrador audita periodicamente muestras de interacciones, detecta patrones de sesgo y ajusta parametros de temperatura, contexto y prompts del sistema para reducir alucinaciones.",
+    "A4: Recomendacion rechazada por el estudiante": "El estudiante marca una recomendacion como 'No es util'; el sistema aprende de esta retroalimentacion negativa y ajusta el peso de los factores para futuras recomendaciones a ese perfil.",
+    "A5: Modo examen activo": "Durante la realizacion de un examen, el asistente IA se desactiva automaticamente para evitar trampas; solo permite preguntas tecnicas sobre el funcionamiento de la plataforma, nunca sobre el contenido del examen.",
+    "A6: Privacidad de datos para entrenamiento": "El estudiante puede optar por no contribuir sus datos anonimizados al entrenamiento del modelo; el sistema respeta la preferencia y aun asi proporciona recomendaciones basadas solo en reglas heuristicas locales."
+  }
+}
+@endjson

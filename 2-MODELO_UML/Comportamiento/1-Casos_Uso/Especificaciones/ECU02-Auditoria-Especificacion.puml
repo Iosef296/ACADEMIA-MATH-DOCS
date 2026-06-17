@@ -1,0 +1,37 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Auditoria y Logs del Sistema",
+  "Id": "CU-02",
+  "Breve descripcion": "El administrador consulta, filtra, exporta y analiza los logs de auditoria del sistema para detectar actividades sospechosas, errores criticos, cumplir con normativas de seguridad y generar reportes de cumplimiento.",
+  "Actores primarios": "Administrador",
+  "Actores secundarios": "Sistema de Deteccion de Intrusos, Base de Datos de Auditoria, Servicio de Alertas, Exportador CSV/PDF",
+  "Precondiciones": [
+    "El administrador ha iniciado sesion con permisos de auditoria (rol 'Auditor' o 'SuperAdmin').",
+    "El sistema de recoleccion de logs esta activo y configurado con politica de retencion definida.",
+    "La politica de retencion establece: 12 meses para logs de accesos, 24 meses para logs de auditoria critica."
+  ],
+  "Flujo principal": {
+    "1": "El administrador accede al modulo de Auditoria desde el panel administrativo.",
+    "2": "El sistema carga el historial de acciones criticas ordenado por fecha descendente (ultimas 100 por defecto).",
+    "3": "El administrador aplica filtros avanzados: usuario especifico, tipo de accion (CRUD, login, configuracion), rango de fechas, modulo afectado, nivel de severidad.",
+    "4": "El sistema (Auditoria Service) ejecuta la consulta filtrada en la base de datos de auditoria con paginacion.",
+    "5": "El administrador visualiza los resultados con detalle de cada evento: timestamp, IP, usuario, accion, modulo, resultado, datos antes/después.",
+    "6": "El administrador selecciona una accion sobre los resultados: exportar a CSV/PDF, ver detalle completo de sesion, o configurar nuevas alertas automaticas.",
+    "7": "El sistema ejecuta la accion solicitada y confirma la operacion.",
+    "8": "El sistema registra la consulta del administrador en el log de auditoria (meta-auditoria) para trazabilidad completa."
+  },
+  "Postcondiciones": [
+    "El administrador obtiene la informacion de auditoria solicitada en el formato deseado.",
+    "Las exportaciones quedan disponibles en el historial de descargas del administrador.",
+    "Las nuevas configuraciones de alertas quedan activas y monitoreando en tiempo real.",
+    "La consulta realizada queda registrada en meta-auditoria."
+  ],
+  "Flujos alternativos": {
+    "A1: Logs corruptos o incompletos": "El sistema detecta inconsistencia en el archivo de logs, notifica del problema especifico y sugiere verificar el servicio de base de datos o restaurar desde backup.",
+    "A2: Consulta muy amplia sin filtros": "El sistema limita la respuesta a 10.000 registros maximos, muestra advertencia de rendimiento y sugiere aplicar filtros adicionales para refinar la busqueda.",
+    "A3: Deteccion automatica de intrusion": "El sistema (Seguridad Service) detecta patrones anomalos (multiple login fallido, acceso desde IP extranjera inesperada) y genera alerta critica automatica, bloqueando la IP sospechosa y notificando al administrador.",
+    "A4: Permisos insuficientes": "Solo administradores con rol 'Auditor' o 'SuperAdmin' pueden acceder al modulo; otros usuarios reciben error 403 y el sistema registra el intento de acceso no autorizado en auditoria.",
+    "A5: Exportacion programada": "El administrador configura exportacion periodica (diaria/semanal/mensual) de logs especificos; el sistema genera y envia automaticamente por email al horario configurado."
+  }
+}
+@endjson
