@@ -1,0 +1,7 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Pagos y Suscripciones",
+  "Id": "CU-15",
+  "Breve descripcion": "Los estudiantes exploran planes de suscripcion, realizan pagos seguros mediante pasarelas externas, gestionan renovaciones automaticas; el administrador configura precios, promociones, descuentos y monitorea ingresos y metricas de negocio.",
+  "Actores primarios": "Estudiante, Administrador",
+  "Actores secundarios": "Pasarela de Pago (Stripe/PayU/MercadoPago), Servicio de Facturacion Electronica, Sistema de
