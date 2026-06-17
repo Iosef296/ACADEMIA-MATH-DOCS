@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+!theme aws-orange
+
+actor Estudiante
+actor Profesor
+
+package "Academia Virtual de Matematicas" {
+  usecase "Recibir ejercicios recomendados segun areas debiles" as IAR01
+  usecase "Ajustar dificultad de parametros adaptativamente" as IAR02
+  usecase "Consultar al asistente IA dudas matematicas" as IAR03
+  usecase "Recibir sugerencia del siguiente tema a estudiar" as IAR04
+  usecase "Recibir resumen semanal de desempeno" as IAR05
+  usecase "Recibir alertas sobre errores recurrentes en EJP" as IAR06
+  usecase "Motor de ejercicios parametrizados" as EJP
+  usecase "Autenticar Usuario" as AUCX
+}
+
+Estudiante --> IAR01
+Estudiante --> IAR02
+Estudiante --> IAR03
+Estudiante --> IAR04
+Estudiante --> IAR05
+Profesor --> IAR06
+
+IAR01 ..> EJP : <<include>>
+IAR02 ..> EJP : <<include>>
+IAR01 ..> AUCX : <<include>>
+IAR03 ..> AUCX : <<include>>
+
+@enduml
