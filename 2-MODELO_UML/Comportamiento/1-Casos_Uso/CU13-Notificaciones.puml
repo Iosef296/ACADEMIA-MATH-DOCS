@@ -1,0 +1,128 @@
+@startuml HU-NOT-notificaciones
+
+left to right direction
+
+title Modulo de Notificaciones
+
+skinparam backgroundColor #1A1A2E
+skinparam actor {
+    BackgroundColor #FF9900
+    BorderColor #FF6600
+    FontColor #FFFFFF
+}
+skinparam usecase {
+    BackgroundColor #232F3E
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam package {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FF9900
+}
+skinparam arrowColor #FF9900
+skinparam note {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam legend {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+
+actor "Estudiante" as EST
+actor "Profesor" as PROF
+actor "Administrador" as ADM
+
+package "Academia Virtual de Matematicas" {
+    package "Notificaciones" {
+
+        usecase "Recibir notificaciones de\nnuevo contenido" as NOT01
+
+        usecase "Configurar notificaciones\npreferidas" as NOT02
+
+        usecase "Ver historial de\nnotificaciones" as NOT03
+
+        usecase "Enviar notificaciones\nmasivas" as NOT04
+
+        usecase "Recibir push en celular" as NOT05
+
+        usecase "Recibir notificacion de\ninicio de clase" as NOT06
+
+        usecase "Recibir alerta de\nplazo de examen" as NOT07
+
+        usecase "Recibir resumen semanal\nde progreso" as NOT08
+
+        usecase "Programar recordatorios\nde estudio" as NOT09
+
+        usecase "Silenciar notificaciones\ntemporariamente" as NOT10
+    }
+}
+
+EST --> NOT01
+EST --> NOT02
+EST --> NOT03
+EST --> NOT05
+EST --> NOT06
+EST --> NOT07
+EST --> NOT08
+EST --> NOT09
+EST --> NOT10
+
+PROF --> NOT04
+PROF --> NOT06
+PROF --> NOT07
+
+ADM --> NOT04
+
+NOT01 ..> NOT05 : <<include>>
+NOT06 ..> NOT05 : <<include>>
+NOT07 ..> NOT05 : <<include>>
+
+NOT02 ..> NOT10 : <<extend>>
+NOT09 ..> NOT02 : <<include>>
+
+note right of NOT02
+  El usuario puede configurar:
+  - Tipos de notificaciones (email, push, in-app)
+  - Frecuencia (inmediata, resumen diario, semanal)
+  - Horarios de silencio (no molestar)
+  - Temas de interes para filtrar
+end note
+
+note right of NOT04
+  Las notificaciones masivas permiten:
+  - Anuncios a todos los usuarios
+  - Comunicados por curso o grupo
+  - Alertas de mantenimiento del sistema
+  - Recordatorios de eventos academicos
+end note
+
+note right of NOT05
+  Las notificaciones push en celular requieren:
+  - App instalada y permisos activados
+  - Conexion a internet
+  - Configuracion previa en el perfil
+end note
+
+note right of NOT09
+  Los recordatorios de estudio se generan
+  automaticamente basados en:
+  - Metas definidas por el estudiante
+  - Examenes proximos
+  - Racha de dias de estudio
+end note
+
+legend right
+
+| |= LEYENDA - Notificaciones | |
+| --> | Asociacion actor -> caso de uso |
+| ..> | Dependencia UML |
+| <<include>> | Flujo obligatorio |
+| <<extend>> | Flujo alternativo |
+
+endlegend
+
+@enduml

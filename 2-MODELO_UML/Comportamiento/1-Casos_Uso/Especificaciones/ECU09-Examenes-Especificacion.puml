@@ -1,0 +1,43 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Examenes y Evaluaciones",
+  "Id": "CU-09",
+  "Breve descripcion": "El profesor crea examenes desde el banco de preguntas o ejercicios parametrizados; los estudiantes los rinden con control de tiempo estricto; el sistema califica automaticamente, genera retroalimentacion detallada y emite certificados de aprobacion.",
+  "Actores primarios": "Profesor, Estudiante",
+  "Actores secundarios": "Banco de Preguntas, Motor EJP, Servicio de Temporizador, Generador de Certificados, Anti-Trampas (proctoring)",
+  "Precondiciones": [
+    "El profesor tiene suficientes preguntas en el banco o plantillas EJP activas para armar el examen.",
+    "El estudiante cumple todos los prerequisitos del examen: temas completados, suscripcion activa que incluye evaluaciones.",
+    "El horario actual del estudiante esta dentro de la ventana de inicio y cierre programada para el examen."
+  ],
+  "Flujo principal": {
+    "1": "El profesor accede al modulo 'Examenes' desde el dashboard docente.",
+    "2": "El profesor crea nuevo examen: titulo, descripcion, duracion maxima, numero de intentos permitidos, puntaje minimo de aprobacion, mostrar respuestas correctas al finalizar (si/no).",
+    "3": "El sistema ofrece fuentes de preguntas: seleccion manual del banco de preguntas, generacion automatica desde ejercicios parametrizados, o examen mixto (ambas fuentes).",
+    "4": "El profesor selecciona del banco aplicando filtros (tema, dificultad, tipo de pregunta) o configura generacion automatica EJP con numero de preguntas y dificultad objetivo.",
+    "5": "El sistema arma el examen mezclando aleatoriamente el orden de las preguntas y, para opcion multiple, el orden de las opciones de respuesta por cada estudiante.",
+    "6": "El profesor programa fecha/hora de inicio, fecha/hora de cierre definitivo, visibilidad de resultados (inmediata/despues de cierre/fecha especifica) y si permite revision posterior.",
+    "7": "El estudiante ve el examen disponible en su dashboard dentro de la ventana programada.",
+    "8": "El estudiante inicia el examen; el sistema (Temporizador Service) activa cuenta regresiva visible en pantalla con advertencia visual en los ultimos 5 minutos.",
+    "9": "El estudiante responde las preguntas secuencialmente o saltando entre ellas; el sistema guarda respuestas automaticamente cada 30 segundos en segundo plano.",
+    "10": "Al finalizar el tiempo maximo o al enviar manualmente, el sistema cierra el examen de forma irreversible y bloquea modificaciones.",
+    "11": "El sistema califica automaticamente preguntas cerradas (opcion multiple, verdadero/falso, emparejamiento); deja preguntas abiertas y de desarrollo pendientes de revision manual del profesor.",
+    "12": "El estudiante visualiza resultados con retroalimentacion por pregunta: respuesta correcta, justificacion, referencia al tema, comparativa con promedio del grupo y percentil obtenido.",
+    "13": "Si el puntaje supera el umbral de aprobacion configurado, el sistema genera certificado digital con codigo QR de verificacion."
+  },
+  "Postcondiciones": [
+    "El examen queda registrado permanentemente con nota final, respuestas completas, tiempo empleado y numero de intento.",
+    "Las preguntas EJP generadas para ese estudiante se almacenan para analisis posterior de efectividad de la plantilla.",
+    "El certificado de aprobacion queda disponible en el perfil del estudiante para descarga y compartir.",
+    "El profesor tiene acceso al reporte completo de rendimiento del grupo y por estudiante."
+  ],
+  "Flujos alternativos": {
+    "A1: Tiempo agotado automaticamente": "El sistema cierra el examen automaticamente al llegar a cero, guarda todas las respuestas parciales registradas hasta ese momento y marca el examen como 'Entregado con tiempo agotado'.",
+    "A2: Perdida de conexion durante examen": "El estudiante puede reanudar el examen desde el ultimo guardado automatico al reconectar; el temporizador continua corriendo en el servidor independientemente de la conexion del cliente.",
+    "A3: Intento adicional permitido": "Si el profesor configuro multiples intentos, el sistema genera un nuevo examen con variantes diferentes (EJP) o mezcla diferente (banco) para cada intento subsiguiente.",
+    "A4: Examen adaptativo en tiempo real": "El sistema ajusta la dificultad de la siguiente pregunta durante el examen segun el desempeno acumulado del estudiante en las preguntas previas.",
+    "A5: Examen de recuperacion": "El profesor habilita un examen de recuperacion con fecha posterior para estudiantes que no alcanzaron el puntaje de aprobacion; puede tener dificultad ajustada o contenido diferente.",
+    "A6: Deteccion de comportamiento sospechoso": "El sistema Anti-Trampas detecta cambio de pestana, copiar-pegar, multiples monitores o inactividad prolongada; registra incidente y notifica al profesor para revision."
+  }
+}
+@endjson

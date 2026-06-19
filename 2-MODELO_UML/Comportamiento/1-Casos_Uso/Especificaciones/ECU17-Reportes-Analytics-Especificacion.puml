@@ -1,0 +1,40 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Reportes y Analytics Educativos",
+  "Id": "CU-17",
+  "Breve descripcion": "El profesor y administrador visualizan metricas de desempeno academico, generan reportes exportables en multiples formatos, identifican estudiantes en riesgo, comparan cohortes y obtienen insights accionables para mejora pedagogica.",
+  "Actores primarios": "Profesor, Administrador",
+  "Actores secundarios": "Motor de Analytics Agregado, Generador de Reportes Dinamicos, Sistema de Alertas Inteligentes, Exportador PDF/Excel/CSV, Visualizador de Graficos Interactivos",
+  "Precondiciones": [
+    "El usuario tiene permisos de reportes segun su rol: profesor visualiza solo sus cursos asignados; administrador visualiza toda la plataforma.",
+    "Hay datos suficientes en el periodo seleccionado (minimo 1 semana de actividad) para generar reportes estadisticamente significativos.",
+    "El modulo de analytics esta activo, los servicios de procesamiento de datos estan operativos y el data warehouse tiene replicacion actualizada."
+  ],
+  "Flujo principal": {
+    "1": "El usuario accede al modulo 'Reportes y Analytics' desde el panel correspondiente a su rol.",
+    "2": "El sistema muestra dashboard general con KPIs principales: estudiantes activos en el periodo, ejercicios resueltos totales, tasa de aprobacion promedio, tiempo promedio de estudio, tasa de finalizacion de cursos.",
+    "3": "El usuario aplica filtros avanzados: curso especifico, unidad tematica, tema particular, grupo de estudiantes (por seccion, cohorte, nivel), rango de fechas personalizado.",
+    "4": "El sistema (Motor de Analytics) procesa la consulta en tiempo real sobre datos agregados del data warehouse, aplicando los filtros seleccionados.",
+    "5": "El usuario selecciona tipo de visualizacion: tabla detallada, grafico de lineas (evolucion temporal), barras (comparativa), heatmap (intensidad de actividad por hora/dia), grafico de dispersion (correlacion variables).",
+    "6": "Para rendimiento por tema: el sistema muestra ranking de dificultad percibida por estudiantes vs tasa de acierto real, identificando brechas donde los estudiantes creen entender pero fallan en practica.",
+    "7": "Para analisis de cohortes: el sistema compara desempeno de grupos actuales vs periodos academicos anteriores, identificando tendencias de mejora o deterioro por area tematica.",
+    "8": "El sistema detecta automaticamente estudiantes en riesgo aplicando modelo predictivo: sin actividad mayor a 7 dias, tasa de error acumulada mayor al 70%, animo negativo sostenido, abandono de examenes programados.",
+    "9": "El usuario exporta el reporte actual en formato PDF (con graficos embebidos), Excel (con datos crudos y tablas dinamicas) o CSV (para analisis externo).",
+    "10": "El administrador programa reportes automaticos: selecciona configuracion de filtros, frecuencia (semanal/mensual/trimestral), destinatarios por email y formato de entrega."
+  },
+  "Postcondiciones": [
+    "El usuario tiene informacion cuantificada y visualizada para tomar decisiones pedagogicas o administrativas basadas en datos.",
+    "Los estudiantes identificados en riesgo son notificados automaticamente a sus profesores asignados con sugerencias de intervencion especificas.",
+    "Los reportes exportados quedan disponibles en el historial de descargas del usuario con fecha de generacion y parametros aplicados.",
+    "Los reportes programados se ejecutan automaticamente segun la frecuencia configurada y se entregan por email a los destinatarios definidos."
+  ],
+  "Flujos alternativos": {
+    "A1": "Datos desactualizados por retraso en replicacion: El sistema muestra datos del ultimo periodo replicado exitosamente, advierte con banner amarillo sobre posible desfase de X horas y ofrece opcion de forzar actualizacion manual (tarda 2-5 minutos).",
+    "A2": "Guardar configuracion como favorito: El usuario guarda la combinacion actual de filtros, visualizacion y formato como 'Reporte Favorito' con nombre personalizado para ejecucion rapida futura sin reconfigurar.",
+    "A3": "Correlaciones no obvias descubiertas: El sistema (Analytics Avanzado) sugiere correlaciones interesantes detectadas automaticamente: ejemplo 'estudiantes que participan activamente en el foro tienen 23% mejor desempeno en examenes finales'.",
+    "A4": "Fallo en reporte programado: El sistema detecta fallo en la generacion automatica, reintenta hasta 3 veces con intervalos de 10 minutos; si persiste, notifica al administrador por email con log de error para soporte tecnico.",
+    "A5": "Exportacion anonimizada para investigacion: El administrador puede exportar dataset completo sin identificadores personales (nombres reemplazados por IDs anonimos) para investigacion academica o publicacion, cumpliendo con normativas de privacidad.",
+    "A6": "Drill-down desde grafico: El usuario hace clic en un punto del grafico (ej: barra de bajo rendimiento en un tema) y el sistema navega automaticamente al reporte detallado de ese tema especifico con lista de estudiantes afectados."
+  }
+}
+@endjson
