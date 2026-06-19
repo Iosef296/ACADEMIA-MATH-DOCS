@@ -1,0 +1,57 @@
+@startuml HU-EXA-examenes
+left to right direction
+skinparam backgroundColor #1A1A2E
+skinparam actorBackgroundColor #FF9900
+skinparam actorBorderColor #FF6600
+skinparam actorFontColor #FFFFFF
+skinparam usecaseBackgroundColor #232F3E
+skinparam usecaseBorderColor #FF9900
+skinparam usecaseFontColor #FFFFFF
+skinparam packageBackgroundColor #2D3748
+skinparam packageBorderColor #FF9900
+skinparam packageFontColor #FF9900
+skinparam arrowColor #FF9900
+
+actor Estudiante
+actor Profesor
+actor Admin
+
+package "Academia Virtual de Matematicas" {
+  package "Examenes" {
+    usecase "Crear examen con preguntas del banco" as EXA01
+    usecase "Configurar tiempo limite y aleatorizacion" as EXA02
+    usecase "Generar simulacros tipo admision" as EXA03
+    usecase "Incluir ejercicios parametrizados en examen" as EXA04
+    usecase "Rendir examen" as EXA05
+    usecase "Calificar automaticamente" as EXA12
+    usecase "Ver retroalimentacion del examen" as EXA06
+    usecase "Guardar progreso ante desconexion" as EXA07
+    usecase "Revisar respuestas al finalizar" as EXA08
+    usecase "Ver historial de examenes rendidos" as EXA09
+    usecase "Programar apertura y cierre de examenes" as EXA10
+    usecase "Emitir certificados de aprobacion" as EXA11
+  }
+  usecase "Autenticar Usuario" as AUCX
+  usecase "Motor de ejercicios parametrizados" as EJP
+}
+
+Profesor --> EXA01
+Profesor --> EXA02
+Profesor --> EXA03
+Profesor --> EXA04
+Estudiante --> EXA05
+Estudiante --> EXA06
+Estudiante --> EXA08
+Estudiante --> EXA09
+Admin --> EXA10
+Admin --> EXA11
+
+EXA01 ..> EXA02 : <<extend>>
+EXA05 ..> AUCX : <<include>>
+EXA05 ..> EXA07 : <<include>>
+EXA05 ..> EXA06 : <<extend>>
+EXA05 ..> EXA08 : <<extend>>
+EXA05 ..> EXA12 : <<include>>
+EXA04 ..> EJP : <<include>>
+
+@enduml
