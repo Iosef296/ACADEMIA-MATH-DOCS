@@ -1,0 +1,41 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Progreso Academico y Rutinas de Estudio",
+  "Id": "CU-16",
+  "Breve descripcion": "El estudiante visualiza su avance academico detallado, racha de estudio, metas personales; el sistema genera planes de estudio adaptativos, envia recordatorios inteligentes y detecta riesgo de desercion para intervencion temprana.",
+  "Actores primarios": "Estudiante",
+  "Actores secundarios": "Motor de Planificacion Adaptativa, Sistema de Gamificacion, Servicio de Recordatorios Inteligentes, Analizador de Ritmo de Aprendizaje, Predictor de Desercion",
+  "Precondiciones": [
+    "El estudiante tiene al menos un curso matriculado y actividad registrada en los ultimos 30 dias.",
+    "El modulo de progreso y rutinas esta activo en la configuracion general del sistema.",
+    "El estudiante ha definido metas de estudio explicitas o ha aceptado las sugerencias generadas automaticamente por el sistema."
+  ],
+  "Flujo principal": {
+    "1": "El estudiante accede al modulo 'Progreso y Rutinas' desde el menu principal o dashboard personal.",
+    "2": "El sistema muestra dashboard completo: porcentaje de avance por curso matriculado, grafico historico de actividad diaria, racha actual de dias consecutivos estudiando, tiempo total de estudio acumulado, calificacion promedio.",
+    "3": "El estudiante define nuevas metas de estudio o ajusta las existentes: horas semanales objetivo, temas especificos a completar, fecha de examen objetivo, puntaje meta.",
+    "4": "El sistema (Motor de Planificacion) genera un plan de estudio semanal personalizado distribuyendo equitativamente los temas pendientes segun fecha limite y prioridad.",
+    "5": "El sistema (Analizador de Ritmo) ajusta dinamicamente el plan segun la velocidad historica real de aprendizaje del estudiante: si avanza mas rapido de lo esperado, aumenta contenido; si va mas lento, reduce y refuerza.",
+    "6": "El estudiante marca actividades como completadas dia a dia; el sistema actualiza el progreso en tiempo real, recalcula porcentajes y verifica si se desbloquean nuevos temas o logros.",
+    "7": "El sistema detecta automaticamente si el estudiante va atrasado o adelantado respecto al plan semanal y sugiere reajustes: reducir temas, aumentar horas, o enfocarse en areas de mayor dificultad.",
+    "8": "El estudiante registra opcionalmente su estado de animo diario seleccionando entre: motivado, neutral, frustrado, agotado, emocionado.",
+    "9": "El sistema correlaciona estado de animo con desempeno academico reciente y ajusta las recomendaciones de IA: si animo frustrado + errores altos, sugiere temas mas ligeros o descanso.",
+    "10": "El sistema envia recordatorios de estudio en los horarios optimos calculados individualmente basados en patrones historicos de mayor productividad del estudiante."
+  },
+  "Postcondiciones": [
+    "El estudiante tiene un plan de estudio realista, adaptado a su ritmo individual y alineado con sus metas academicas.",
+    "El sistema tiene datos suficientes (progreso, animo, tiempos, errores) para predicciones precisas de desempeno y deteccion temprana de riesgo de desercion.",
+    "La gamificacion (racha, niveles, XP) se alimenta continuamente del progreso registrado en este modulo.",
+    "El apoderado/tutor vinculado recibe resumen semanal si asi lo configuro."
+  ],
+  "Flujos alternativos": {
+    "A1: Repaso prioritario sugerido": "Antes de avanzar a contenido nuevo, el sistema detecta temas previos con baja retencion (tasa de acierto <60% en repaso) y sugiere sesion de repaso prioritaria con ejercicios EJP enfocados.",
+    "A2: Pausa temporal de metas": "El estudiante puede activar 'Modo Pausa' por vacaciones, examenes de otras materias o emergencias; el sistema conserva racha si pausa menor a 7 dias, congela plan y reanuda automaticamente en fecha indicada.",
+    "A3: Alerta de animo negativo sostenido": "El sistema detecta 3 dias consecutivos con animo 'frustrado' o 'agotado' combinado con bajo desempeno; genera alerta automatica al profesor asignado para intervencion pedagogica personalizada.",
+    "A4: Compartir progreso con apoderado": "El estudiante autoriza compartir progreso; el apoderado vinculado recibe resumen semanal por email con graficos de avance, tiempo de estudio y alertas si aplica.",
+    "A5: Sugerencia de descanso activo": "Cuando el sistema detecta sobrecarga de contenido (mas de 4 horas diarias por 5 dias seguidos) o rendimiento decreciente, sugiere dia de descanso activo con contenido ligero o actividad recreativa matematica.",
+    "A6: Comparativa con cohorte": "El estudiante puede visualizar su progreso comparado anonimamente con el promedio de su cohorte o grupo de estudio, fomentando competencia sana o identificando si va rezagado.",
+    "A7: Prediccion de riesgo de desercion": "El sistema (Predictor) identifica patrones de riesgo: sin actividad >7 dias, tasa de error creciente, animo negativo sostenido, abandono de examenes; genera alerta temprana al profesor y al estudiante con plan de recuperacion sugerido."
+  }
+}
+@endjson

@@ -1,0 +1,52 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Clases en Vivo y Grabaciones",
+  "Id": "CU-06",
+  "Breve descripcion": "El profesor programa clases virtuales sincronicas con fecha, hora, duracion y material previo; los estudiantes reciben notificaciones, acceden a la sala virtual, participan via chat, levantan mano, responden encuestas y acceden posteriormente a grabaciones. El administrador supervisa programacion y asistencia.",
+  "Actores primarios": "Profesor, Estudiante, Administrador",
+  "Actores secundarios": "Servicio de Videoconferencia (WebRTC), Servicio de Notificaciones Push/Email, Almacenamiento de Grabaciones, Transcriptor Automatico, Motor de Encuestas en Tiempo Real",
+  "Precondiciones": [
+    "El profesor tiene curso activo, permisos para crear salas y cupo disponible segun su plan institucional.",
+    "El estudiante esta matriculado en el curso correspondiente y con suscripcion activa que incluye clases en vivo.",
+    "El modulo de Clases en Vivo esta activo en la configuracion general del sistema y los servicios de videoconferencia estan operativos."
+  ],
+  "Flujo principal": {
+    "1": "El profesor accede al modulo 'Clases en Vivo' desde su dashboard docente.",
+    "2": "El profesor programa nueva clase (CLV01): ingresa titulo descriptivo, descripcion detallada, fecha y hora de inicio, curso asociado, tema relacionado, duracion estimada y sube material previo para descarga.",
+    "3": "El sistema valida que no exista conflicto de horario con otras clases del mismo curso o profesor; guarda la programacion.",
+    "4": "El sistema (Notificaciones Service) envia automaticamente alertas de programacion a estudiantes matriculados via email, push movil y notificacion in-app (CLV01 incluye CLV02).",
+    "5": "En la fecha y hora programada, el sistema envia recordatorio de inicio inminente (15 min antes) a todos los inscritos (CLV02).",
+    "6": "El profesor inicia la sala virtual desde su panel; el sistema genera enlace unico y abre la sala con funcionalidades completas.",
+    "7": "Los estudiantes acceden a la sala virtual (CLV03) mediante enlace directo o desde el curso; el sistema registra asistencia automatica con timestamp de entrada (CLV03 incluye CLV05 - acceso activa chat).",
+    "8": "Durante la clase, el profesor utiliza la pizarra digital interactiva (CLV07) para escribir formulas matematicas con stylus o mouse, insertar graficos y diagramas, guardar contenido como PDF y compartir con estudiantes en tiempo real.",
+    "9": "El profesor puede compartir pantalla (CLV08) como extension de la pizarra para mostrar software, documentos o demostraciones adicionales (CLV07 extiende a CLV08 - flujo alternativo).",
+    "10": "Los estudiantes usan el chat durante la clase (CLV05) para escribir preguntas, comentarios y enlaces; el chat queda registrado para posterior consulta.",
+    "11": "El estudiante levanta mano virtual (CLV09) para solicitar participacion oral; el profesor ve la solicitud en lista, concede el turno y el estudiante activa microfono y camara (CLV09 extiende CLV07 - requiere pizarra/compartir para interactuar).",
+    "12": "El profesor lanza encuesta en vivo (CLV10) para verificar comprension; los estudiantes responden en tiempo real y el sistema muestra resultados agregados visualmente al profesor (CLV10 extiende CLV05 - usa chat como canal de respuesta).",
+    "13": "El profesor genera salas de breakout (CLV11) dividiendo a estudiantes en grupos pequenos para trabajos colaborativos, discusion de conceptos o preparacion de presentaciones grupales.",
+    "14": "Los estudiantes en breakout rooms trabajan con pizarra compartida del grupo y chat interno; el profesor puede visitar cada sala virtualmente.",
+    "15": "Al finalizar la clase, el profesor cierra la sala; el sistema inicia grabacion automatica del stream completo (video, audio, pizarra, chat).",
+    "16": "El sistema procesa la grabacion, genera transcripcion automatica del audio, extrae diapositivas de la pizarra y vincula todo al curso para acceso bajo demanda (CLV04).",
+    "17": "Los estudiantes descargan material de clase (CLV12): PDF de la pizarra, grabacion de la clase, transcripcion y recursos adicionales compartidos durante la sesion.",
+    "18": "El profesor y el administrador visualizan el registro de asistencia (CLV06) con lista de estudiantes, hora de entrada, duracion de participacion, participacion en chat y encuestas."
+  },
+  "Postcondiciones": [
+    "La clase queda registrada con metadatos completos: fecha, duracion real, lista de asistencia, participacion en chat, respuestas a encuestas y tiempo en breakout rooms.",
+    "La grabacion, transcripcion, pizarra guardada y chat quedan disponibles para estudiantes que no asistieron o desean repasar contenido.",
+    "El profesor puede descargar reporte de asistencia y participacion en formato PDF/Excel.",
+    "El administrador tiene visibilidad de todas las clases programadas, dictadas, canceladas y metricas de asistencia global."
+  ],
+  "Flujos alternativos": {
+    "A1: Estudiante llega tarde a la clase": "El estudiante puede unirse a la sala en cualquier momento durante la transmision; el sistema marca 'Retraso' en asistencia con minutos de demora calculados desde el inicio oficial.",
+    "A2: Profesor no inicia la clase a la hora programada": "Si pasan 15 minutos del inicio programado sin que el profesor abra la sala, el sistema envia alerta al profesor, notifica a estudiantes de posible retraso y ofrece opcion de reprogramacion automatica.",
+    "A3: Fallo de conexion del profesor durante la clase": "El sistema detecta desconexion del host; si fue configurado previamente, transfiere control automaticamente a profesor suplente designado; si no, pausa la clase, notifica a estudiantes y permite reprogramacion.",
+    "A4: Sala llena - capacidad excedida": "Si se excede el cupo maximo configurado para el plan institucional, nuevos ingresos son redirigidos a sala de espera virtual; el profesor recibe notificacion y puede autorizar entrada adicional o aumentar cupo temporalmente.",
+    "A5: Contenido inapropiado en chat": "El sistema filtra automaticamente palabras prohibidas del diccionario institucional, oculta el mensaje para todos excepto moderadores, notifica al profesor en tiempo real y registra incidente para posible sancion.",
+    "A6: Grabacion fallida por error tecnico": "El sistema detecta fallo en el servicio de grabacion, notifica inmediatamente al profesor y al administrador tecnico, ofrece reintentar manualmente dentro de las 2 horas posteriores o programar sesion de repeticion.",
+    "A7: Estudiante con conexion inestable": "El sistema adapta automaticamente la calidad de video del estudiante a resolucion baja (240p) y sugiere activar solo audio para mantener estabilidad de conexion; el chat y la pizarra siguen funcionando normalmente.",
+    "A8: Encuesta con participacion baja": "Si menos del 30% de estudiantes responden la encuesta en 2 minutos, el sistema notifica al profesor quien puede extender el tiempo, reformular la pregunta o convertirla en pregunta oral.",
+    "A9: Breakout room sin participacion": "Si un estudiante no participa en chat ni pizarra de su breakout room por mas de 5 minutos, el sistema alerta al profesor quien puede reasignar al estudiante a otro grupo o traerlo de vuelta a sala principal.",
+    "A10: Administrador cancela clase programada": "El administrador puede cancelar clase por motivos institucionales; el sistema notifica a todos los inscritos, elimina la programacion y archiva el motivo de cancelacion para auditoria."
+  }
+}
+@endjson
