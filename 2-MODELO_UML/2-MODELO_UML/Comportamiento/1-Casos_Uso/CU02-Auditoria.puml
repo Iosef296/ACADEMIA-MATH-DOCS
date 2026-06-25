@@ -1,0 +1,121 @@
+@startuml HU-AUD-auditoria
+
+left to right direction
+
+title Modulo de Auditoria y Logs
+
+skinparam backgroundColor #1A1A2E
+skinparam actor {
+    BackgroundColor #FF9900
+    BorderColor #FF6600
+    FontColor #FFFFFF
+}
+skinparam usecase {
+    BackgroundColor #232F3E
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam package {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FF9900
+}
+skinparam arrowColor #FF9900
+skinparam note {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam legend {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+
+actor "Administrador" as ADM
+
+package "Academia Virtual de Matematicas" {
+    package "Auditoria y Logs" {
+
+        usecase "Ver historial de\nacciones criticas" as AUD01
+
+        usecase "Filtrar logs por usuario,\naccion y fecha" as AUD02
+
+        usecase "Recibir alertas ante\nactividad sospechosa" as AUD03
+
+        usecase "Exportar logs en CSV" as AUD04
+
+        usecase "Conservar logs por\n12 meses" as AUD05
+
+        usecase "Ver detalle de sesion\nde usuario" as AUD06
+
+        usecase "Detectar intentos de\nacceso no autorizado" as AUD07
+
+        usecase "Generar reporte de\nincidentes de seguridad" as AUD08
+
+        usecase "Configurar nivel de\nseveridad de alertas" as AUD09
+    }
+}
+
+ADM --> AUD01
+ADM --> AUD02
+ADM --> AUD03
+ADM --> AUD04
+ADM --> AUD05
+ADM --> AUD06
+ADM --> AUD07
+ADM --> AUD08
+ADM --> AUD09
+
+AUD01 ..> AUD02 : <<include>>
+AUD01 ..> AUD05 : <<include>>
+
+AUD03 ..> AUD07 : <<include>>
+AUD07 ..> AUD08 : <<include>>
+
+AUD06 ..> AUD01 : <<extend>>
+
+note right of AUD01
+  Acciones criticas registradas:
+  - Creacion/eliminacion de usuarios
+  - Cambios en permisos de rol
+  - Modificacion de precios o planes
+  - Eliminacion de contenido
+  - Accesos fuera de horario habitual
+end note
+
+note right of AUD03
+  Actividad sospechosa detectada:
+  - Multiple fallo de login desde misma IP
+  - Descarga masiva de contenido
+  - Acceso desde ubicacion inusual
+  - Modificacion de datos ajenos
+end note
+
+note right of AUD05
+  Politica de retencion:
+  - Logs de acceso: 12 meses
+  - Logs de errores: 6 meses
+  - Logs de auditoria: 24 meses
+  - Backups automaticos mensuales
+end note
+
+note right of AUD07
+  El sistema detecta automaticamente:
+  - Fuerza bruta en login
+  - Inyeccion SQL
+  - XSS en campos de texto
+  - CSRF en peticiones criticas
+end note
+
+legend right
+
+| |= LEYENDA - Auditoria y Logs | |
+| --> | Asociacion actor -> caso de uso |
+| ..> | Dependencia UML |
+| <<include>> | Flujo obligatorio |
+| <<extend>> | Flujo alternativo |
+
+endlegend
+
+@enduml

@@ -1,0 +1,133 @@
+@startuml HU-AUT-autenticacion
+
+left to right direction
+
+title Modulo de Autenticacion
+
+skinparam backgroundColor #1A1A2E
+skinparam actor {
+    BackgroundColor #FF9900
+    BorderColor #FF6600
+    FontColor #FFFFFF
+}
+skinparam usecase {
+    BackgroundColor #232F3E
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam package {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FF9900
+}
+skinparam arrowColor #FF9900
+skinparam note {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam legend {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+
+actor "Estudiante" as EST
+actor "Profesor" as PROF
+actor "Administrador" as ADM
+
+package "Academia Virtual de Matematicas" {
+    package "Autenticacion" {
+
+        usecase "Registrar usuario" as AUT01
+
+        usecase "Autenticar usuario" as AUT02
+
+        usecase "Mantener acceso\n(sesion activa)" as AUT03
+
+        usecase "Recuperar contrasena" as AUT04
+
+        usecase "Verificar correo\nelectronico" as AUT05
+
+        usecase "Cerrar sesion" as AUT06
+
+        usecase "Bloquear cuenta por\nintentos fallidos" as AUT07
+
+        usecase "Configurar autenticacion\nde dos factores" as AUT08
+
+        usecase "Iniciar sesion con\nredes sociales (SSO)" as AUT09
+
+        usecase "Verificar identidad con\ndocumento oficial" as AUT10
+    }
+}
+
+EST --> AUT01
+EST --> AUT02
+EST --> AUT03
+EST --> AUT04
+EST --> AUT06
+EST --> AUT09
+
+PROF --> AUT02
+PROF --> AUT03
+PROF --> AUT04
+PROF --> AUT06
+PROF --> AUT09
+
+ADM --> AUT02
+ADM --> AUT07
+ADM --> AUT10
+
+AUT01 ..> AUT05 : <<include>>
+AUT02 ..> AUT03 : <<include>>
+
+AUT04 ..> AUT05 : <<include>>
+
+AUT02 ..> AUT07 : <<extend>>
+AUT02 ..> AUT08 : <<extend>>
+
+AUT09 ..> AUT02 : <<extend>>
+
+note right of AUT02
+  El proceso de autenticacion incluye:
+  - Validacion de correo y contrasena
+  - Verificacion de cuenta activa
+  - Comprobacion de 2FA (si activado)
+  - Registro de IP y dispositivo
+end note
+
+note right of AUT03
+  Mantener acceso incluye:
+  - Token de sesion renovable
+  - Timeout por inactividad (30 min)
+  - Validacion periodica de credenciales
+  - Cierre automatico en cambio de IP sospechoso
+end note
+
+note right of AUT07
+  La cuenta se bloquea temporalmente tras:
+  - 5 intentos fallidos de login
+  - Duracion del bloqueo: 15 minutos
+  - Notificacion por email al usuario
+  - Desbloqueo manual por admin si es necesario
+end note
+
+note right of AUT10
+  Verificacion de identidad:
+  - Subir foto de documento oficial
+  - Validacion OCR del documento
+  - Comparacion facial (selfie vs foto ID)
+  - Aprobacion manual por administrador
+end note
+
+legend right
+
+| |= LEYENDA - Autenticacion | |
+| --> | Asociacion actor -> caso de uso |
+| ..> | Dependencia UML |
+| <<include>> | Flujo obligatorio |
+| <<extend>> | Flujo alternativo |
+
+endlegend
+
+@enduml

@@ -1,0 +1,144 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Foro e Interacción (CU-12)
+
+actor "est: Estudiante" as E1
+actor "est2: Estudiante" as E2
+actor "prof: Profesor" as P
+participant "forum: ForoService" as FOR
+participant "mod: ModeracionService" as MOD
+participant "latex: LaTeXRenderService" as TEX
+participant "rep: ReputacionService" as REP
+participant "notif: NotificacionService" as NOT
+participant "db: BaseDeDatos" as DB
+
+== Crear Publicación ==
+E1 -> FOR : crearPublicacion(titulo, descripcion, tema)
+activate FOR
+
+FOR -> MOD : validarContenido(titulo, descripcion)
+activate MOD
+
+MOD -> MOD : verificarLongitudMinima()
+MOD -> MOD : verificarDuplicados()
+MOD -> MOD : filtrarPalabrasProhibidas()
+
+MOD --> FOR : contenidoValido / errores
+deactivate MOD
+
+alt Contenido válido
+    FOR -> TEX : validarLaTeX(descripcion)
+    activate TEX
+    TEX --> FOR : valido / error
+    deactivate TEX
+    
+    FOR -> DB : guardarPublicacion(datos)
+    activate DB
+    DB --> FOR : idPublicacion
+    deactivate DB
+    
+    FOR -> NOT : notificarSeguidores(tema, idPublicacion)
+    activate NOT
+    NOT --> FOR : notificacionesEnviadas
+    deactivate NOT
+    
+    FOR --> E1 : publicacionCreada(idPublicacion)
+    
+else Contenido inválido
+    FOR --> E1 : error: "Revise contenido o formato LaTeX"
+end
+
+deactivate FOR
+
+== Responder Publicación ==
+E2 -> FOR : responderPublicacion(idPublicacion, respuesta)
+activate FOR
+
+FOR -> MOD : validarContenido(respuesta)
+activate MOD
+MOD --> FOR : valido
+deactivate MOD
+
+FOR -> TEX : validarLaTeX(respuesta)
+activate TEX
+TEX --> FOR : valido
+deactivate TEX
+
+FOR -> DB : guardarRespuesta(idPublicacion, respuesta, autor)
+activate DB
+DB --> FOR : idRespuesta
+deactivate DB
+
+FOR -> NOT : notificarAutor(idPublicacion, nuevaRespuesta)
+activate NOT
+NOT --> FOR : notificacionEnviada
+deactivate NOT
+
+FOR --> E2 : respuestaPublicada
+deactivate FOR
+
+== Votar y Marcar Correcta ==
+E1 -> FOR : votarRespuesta(idRespuesta, voto)
+activate FOR
+
+FOR -> REP : registrarVoto(idRespuesta, voto, autor)
+activate REP
+REP --> FOR : votoRegistrado
+deactivate REP
+
+FOR --> E1 : votoContabilizado
+deactivate FOR
+
+P -> FOR : marcarRespuestaCorrecta(idPublicacion, idRespuesta)
+activate FOR
+
+FOR -> DB : actualizarEstado(idPublicacion, RESUELTA, idRespuesta)
+activate DB
+DB --> FOR : confirmacion
+deactivate DB
+
+FOR -> REP : otorgarReputacion(idRespuesta, puntos)
+activate REP
+REP --> FOR : reputacionActualizada
+deactivate REP
+
+FOR -> NOT : notificarVotantes(idRespuesta, marcadaCorrecta)
+activate NOT
+NOT --> FOR : notificacionesEnviadas
+deactivate NOT
+
+FOR --> P : respuestaMarcadaCorrecta
+deactivate FOR
+
+== Moderación de Contenido ==
+loop Monitoreo automático
+    MOD -> MOD : detectarContenidoInapropiado()
+    
+    alt Contenido reportado
+        MOD -> FOR : ocultarTemporalmente(idContenido)
+        activate FOR
+        FOR --> MOD : contenidoOculto
+        deactivate FOR
+        
+        MOD -> NOT : notificarModeradores(idContenido, motivo)
+        activate NOT
+        NOT --> MOD : notificacionEnviada
+        deactivate NOT
+        
+        alt Moderador confirma inapropiado
+            MOD -> REP : aplicarSancion(autor, tipo)
+            activate REP
+            REP --> MOD : sancionAplicada
+            deactivate REP
+        else Moderador aprueba contenido
+            MOD -> FOR : restaurarContenido(idContenido)
+            activate FOR
+            FOR --> MOD : contenidoRestaurado
+            deactivate FOR
+        end
+    end
+end
+
+deactivate E1
+deactivate E2
+deactivate P
+@enduml

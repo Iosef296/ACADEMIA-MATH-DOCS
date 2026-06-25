@@ -1,0 +1,127 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Exámenes (CU-09)
+
+actor "prof: Profesor" as P
+actor "est: Estudiante" as E
+participant "exam: ExamenService" as EX
+participant "bank: BancoPreguntasService" as BANK
+participant "ejp: EjerciciosParametrizadosService" as EJP
+participant "timer: TemporizadorService" as TIM
+participant "cert: CertificadoService" as CERT
+participant "db: BaseDeDatos" as DB
+
+== Crear Examen ==
+P -> EX : crearExamen(configuracion)
+activate EX
+
+EX -> EX : validarConfiguracion(configuracion)
+
+alt Fuente: Banco de Preguntas
+    EX -> BANK : seleccionarPreguntas(filtros, cantidad)
+    activate BANK
+    BANK --> EX : preguntasSeleccionadas
+    deactivate BANK
+    
+else Fuente: Ejercicios Parametrizados
+    EX -> EJP : generarVariantes(idPlantillas, cantidad)
+    activate EJP
+    EJP --> EX : variantesGeneradas
+    deactivate EJP
+end
+
+EX -> EX : mezclarPreguntas()
+EX -> EX : mezclarOpciones()
+
+EX -> DB : guardarExamen(examenCompleto)
+activate DB
+DB --> EX : idExamen
+deactivate DB
+
+EX --> P : examenCreado(idExamen)
+deactivate EX
+
+== Iniciar Examen ==
+E -> EX : iniciarExamen(idExamen)
+activate EX
+
+EX -> DB : verificarPrerequisitos(estudiante, idExamen)
+activate DB
+DB --> EX : prerequisitosCumplidos / noCumplidos
+deactivate DB
+
+alt Prerequisitos cumplidos
+    EX -> TIM : iniciarTemporizador(idExamen, duracion)
+    activate TIM
+    TIM --> EX : temporizadorActivo
+    deactivate TIM
+    
+    EX -> DB : crearSesionExamen(estudiante, idExamen)
+    activate DB
+    DB --> EX : tokenSesion
+    deactivate DB
+    
+    EX --> E : examenIniciado(preguntas, tiempoRestante)
+    
+else No cumple prerequisitos
+    EX --> E : error: "Complete temas requeridos"
+end
+
+deactivate EX
+
+== Guardar Respuesta ==
+E -> EX : enviarRespuesta(idPregunta, respuesta)
+activate EX
+
+EX -> DB : guardarRespuestaParcial(tokenSesion, idPregunta, respuesta)
+activate DB
+DB --> EX : confirmacion
+deactivate DB
+
+EX --> E : respuestaGuardada
+deactivate EX
+
+== Finalizar Examen ==
+alt Tiempo agotado
+    TIM -> EX : tiempoFinalizado(tokenSesion)
+    activate EX
+    EX -> EX : cerrarExamen(tokenSesion)
+else Estudiante envía manualmente
+    E -> EX : finalizarExamen()
+    activate EX
+    EX -> TIM : detenerTemporizador(tokenSesion)
+    activate TIM
+    TIM --> EX : tiempoDetenido
+    deactivate TIM
+end
+
+EX -> EX : calificarAutomaticamente()
+
+loop Por cada pregunta
+    alt Pregunta cerrada
+        EX -> EX : compararRespuesta(respuesta, correcta)
+    else Pregunta abierta
+        EX -> DB : marcarParaRevisionManual(idPregunta)
+        activate DB
+        DB --> EX : marcado
+        deactivate DB
+    end
+end
+
+EX -> DB : guardarResultado(tokenSesion, nota, respuestas)
+activate DB
+DB --> EX : confirmacion
+deactivate DB
+
+alt Aprobado
+    EX -> CERT : generarCertificado(estudiante, idExamen, nota)
+    activate CERT
+    CERT --> EX : certificadoGenerado
+    deactivate CERT
+end
+
+EX --> E : resultadosDisponibles(nota, retroalimentacion, comparativa)
+deactivate EX
+
+deactivate P
+deactivate E
+@enduml

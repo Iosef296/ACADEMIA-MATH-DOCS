@@ -1,0 +1,33 @@
+@startuml
+title Diagrama de Estado - Gestionar Gamificación (CU-10)
+
+[*] --> RegistrandoActividad
+
+RegistrandoActividad --> CalculandoXP : actividadCompletada()
+CalculandoXP --> VerificandoLogros : xpCalculado
+
+VerificandoLogros --> DesbloqueandoLogro : logroAlcanzado
+VerificandoLogros --> VerificandoNivel : sinNuevosLogros
+
+DesbloqueandoLogro --> NotificandoLogro : logroDesbloqueado
+NotificandoLogro --> VerificandoNivel : notificacionEnviada
+
+VerificandoNivel --> SubiendoNivel : umbralSuperado
+VerificandoNivel --> RegistrandoActividad : mantenerNivel
+
+SubiendoNivel --> AnimandoCelebracion : nivelSubido
+AnimandoCelebracion --> DesbloqueandoFuncionalidades : animacionCompleta
+DesbloqueandoFuncionalidades --> RegistrandoActividad : continuar
+
+RegistrandoActividad --> AcumulandoPuntos : canjeablesCalculados
+
+AcumulandoPuntos --> CanjeandoRecompensa : irATienda()
+CanjeandoRecompensa --> VerificandoSaldo : seleccionarRecompensa()
+
+VerificandoSaldo --> CanjeandoRecompensa : saldoInsuficiente
+VerificandoSaldo --> AplicandoRecompensa : saldoSuficiente
+
+AplicandoRecompensa --> AcumulandoPuntos : recompensaActiva
+
+RegistrandoActividad --> [*] : salir()
+@enduml

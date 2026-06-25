@@ -1,0 +1,37 @@
+@startuml
+title Diagrama de Estado - Gestionar Progreso y Rutinas (CU-16)
+
+[*] --> VisualizandoDashboard
+
+VisualizandoDashboard --> DefiniendoMetas : nuevasMetas()
+DefiniendoMetas --> GenerandoPlanSemanal : metasDefinidas
+
+GenerandoPlanSemanal --> AnalizandoRitmoHistorico : calcularVelocidad()
+AnalizandoRitmoHistorico --> DistribuyendoTemas : ritmoCalculado
+DistribuyendoTemas --> PlanGenerado : planListo
+
+PlanGenerado --> VisualizandoDashboard : planGuardado
+
+VisualizandoDashboard --> RegistrandoActividad : marcarCompletado()
+RegistrandoActividad --> ActualizandoProgreso : actividadRegistrada
+
+ActualizandoProgreso --> VerificandoDesbloqueos : progresoActualizado
+VerificandoDesbloqueos --> RegistrandoActividad : nuevosTemasDisponibles
+
+ActualizandoProgreso --> DetectandoAtraso : vaAtrasado()
+DetectandoAtraso --> SugerendoReajuste : atrasoConfirmado
+SugerendoReajuste --> PlanGenerado : reajustar()
+
+ActualizandoProgreso --> DetectandoAnimoNegativo : 3diasNegativo()
+DetectandoAnimoNegativo --> AlertandoProfesor : animo + erroresAltos
+AlertandoProfesor --> RegistrandoActividad : alertaEnviada
+
+RegistrandoActividad --> SincronizandoGamificacion : xpCalculado
+SincronizandoGamificacion --> RegistrandoActividad : sincronizado
+
+VisualizandoDashboard --> ConfigurandoCompartir : vincularApoderado()
+ConfigurandoCompartir --> EnviandoResumenSemanal : apoderadoVinculado
+EnviandoResumenSemanal --> VisualizandoDashboard : resumenEnviado
+
+VisualizandoDashboard --> [*] : salir()
+@enduml

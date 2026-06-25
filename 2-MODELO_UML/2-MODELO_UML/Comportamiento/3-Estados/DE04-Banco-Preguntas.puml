@@ -1,0 +1,32 @@
+@startuml
+title Diagrama de Estado - Gestionar Banco de Preguntas (CU-04)
+
+[*] --> ExplorandoBanco
+
+ExplorandoBanco --> CreandoPregunta : nuevaPregunta()
+ExplorandoBanco --> ImportandoDesdeExcel : importar()
+ExplorandoBanco --> EditandoPregunta : seleccionarPregunta()
+ExplorandoBanco --> BuscandoPreguntas : aplicarFiltros()
+
+CreandoPregunta --> ValidandoLaTeX : ingresarEnunciado()
+ValidandoLaTeX --> CreandoPregunta : errorSintaxis
+ValidandoLaTeX --> ClasificandoIA : sintaxisValida
+
+ClasificandoIA --> RevisandoSugerencias : sugerenciasListas
+RevisandoSugerencias --> GuardandoPregunta : confirmar()
+GuardandoPregunta --> ExplorandoBanco : guardada
+
+ImportandoDesdeExcel --> ValidandoFormato : cargarArchivo()
+ValidandoFormato --> ImportandoDesdeExcel : formatoInvalido
+ValidandoFormato --> ProcesandoFilas : formatoValido
+
+ProcesandoFilas --> GenerandoReporte : procesamientoCompleto
+GenerandoReporte --> ExplorandoBanco : finalizar()
+
+EditandoPregunta --> VersionandoPregunta : guardarComoNuevaVersion()
+EditandoPregunta --> ExplorandoBanco : cancelar()
+
+BuscandoPreguntas --> ExplorandoBanco : resultadosListos
+
+ExplorandoBanco --> [*] : salir()
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+title Diagrama de Estado - Gestionar Auditoría y Logs (CU-02)
+
+[*] --> ModoConsulta
+
+ModoConsulta --> FiltrandoLogs : aplicarFiltros()
+ModoConsulta --> ExportandoLogs : seleccionarExportar()
+ModoConsulta --> ConfigurandoAlertas : configurarAlertas()
+
+FiltrandoLogs --> ModoConsulta : aplicar()
+FiltrandoLogs --> VisualizandoDetalle : seleccionarLog()
+
+VisualizandoDetalle --> ModoConsulta : volver()
+
+ExportandoLogs --> GenerandoCSV : formatoCSV()
+ExportandoLogs --> GenerandoPDF : formatoPDF()
+
+GenerandoCSV --> ModoConsulta : descargar()
+GenerandoPDF --> ModoConsulta : descargar()
+
+ConfigurandoAlertas --> AlertaActiva : guardar()
+ConfigurandoAlertas --> ModoConsulta : cancelar()
+
+AlertaActiva --> DetectandoIntruso : patronAnomaloDetectado()
+DetectandoIntruso --> BloqueandoIP : umbralSuperado()
+BloqueandoIP --> AlertaActiva : ipBloqueada
+DetectandoIntruso --> AlertaActiva : falsoPositivo
+
+ModoConsulta --> [*] : salir()
+@enduml

@@ -1,0 +1,114 @@
+@startuml
+title Diagrama de Secuencia - Gestionar PDF y OCR (CU-14)
+
+actor "prof: Profesor" as P
+participant "ocr: OCRService" as OCR
+participant "parser: LaTeXParser" as TEX
+participant "storage: AlmacenamientoService" as STOR
+participant "notif: NotificacionService" as NOT
+participant "db: BaseDeDatos" as DB
+
+== Subir PDF ==
+P -> OCR : subirPDF(archivo, metadatos)
+activate OCR
+
+OCR -> OCR : validarFormato(archivo)
+OCR -> OCR : validarTamano(archivo)
+OCR -> OCR : validarResolucion(archivo)
+
+alt Archivo válido
+    OCR -> STOR : guardarArchivoOriginal(archivo)
+    activate STOR
+    STOR --> OCR : urlArchivo
+    deactivate STOR
+    
+    OCR -> OCR : encolarProcesamiento(idProceso)
+    OCR --> P : procesando(idProceso, tiempoEstimado)
+    
+else Archivo inválido
+    OCR --> P : error: "Resolución mínima 300 DPI, tamaño máximo 50MB"
+end
+
+deactivate OCR
+
+== Procesar OCR ==
+OCR -> OCR : iniciarProcesamiento(idProceso)
+
+OCR -> OCR : extraerTextoPlano(paginas)
+OCR -> TEX : identificarFormulas(textoExtraido)
+activate TEX
+
+loop Por cada fórmula detectada
+    TEX -> TEX : reconocerSimbolos()
+    TEX -> TEX : convertirALaTeX()
+    
+    alt Fórmula compleja no reconocida
+        TEX -> TEX : marcarParaRevisionManual()
+    end
+end
+
+TEX --> OCR : formulasConvertidas, formulasPendientes
+deactivate TEX
+
+OCR -> OCR : generarPreviewLadoALado(original, extraido)
+
+OCR -> NOT : notificarProfesor(idProceso, "Revisión requerida")
+activate NOT
+NOT --> OCR : notificacionEnviada
+deactivate NOT
+
+== Revisión del Profesor ==
+P -> OCR : obtenerPreview(idProceso)
+activate OCR
+
+OCR --> P : previewLadoALado(original, extraido, indicadoresConfianza)
+
+P -> OCR : corregirErrores(correcciones)
+activate OCR
+
+OCR -> TEX : aplicarCorrecciones(correcciones)
+activate TEX
+TEX --> OCR : correccionesAplicadas
+deactivate TEX
+
+OCR --> P : correccionesGuardadas
+deactivate OCR
+
+== Publicar Contenido ==
+P -> OCR : aprobarPublicacion(idProceso, destino)
+activate OCR
+
+alt Destino: Tema nuevo
+    OCR -> DB : crearTema(contenidoExtraido)
+    activate DB
+    DB --> OCR : idTema
+    deactivate DB
+    
+else Destino: Tema existente
+    OCR -> DB : agregarSeccion(idTema, contenido)
+    activate DB
+    DB --> OCR : confirmacion
+    deactivate DB
+    
+else Destino: Borrador
+    OCR -> DB : guardarBorrador(contenido)
+    activate DB
+    DB --> OCR : idBorrador
+    deactivate DB
+end
+
+OCR -> STOR : vincularContenidoAContenido(idProceso, idDestino)
+activate STOR
+STOR --> OCR : confirmacion
+deactivate STOR
+
+OCR -> NOT : notificarEstudiantes(idDestino, "Nuevo contenido disponible")
+activate NOT
+NOT --> OCR : notificacionesEnviadas
+deactivate NOT
+
+OCR --> P : contenidoPublicado
+deactivate OCR
+
+deactivate P
+@enduml

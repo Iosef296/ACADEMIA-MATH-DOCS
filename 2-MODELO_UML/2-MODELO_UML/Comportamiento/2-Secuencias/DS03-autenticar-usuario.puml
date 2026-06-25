@@ -1,0 +1,94 @@
+@startuml
+title Diagrama de Secuencia - Autenticar Usuario (CU-03)
+
+actor "usr: Usuario" as U
+actor "est: Estudiante" as E
+actor "prof: Profesor" as P
+actor "adm: Administrador" as A
+participant "auth: AutenticacionService" as AUTH
+participant "usrSvc: UsuarioService" as USR
+participant "jwt: JWTService" as JWT
+participant "email: EmailService" as MAIL
+participant "audit: AuditoriaService" as AUD
+
+== Inicio de Sesión ==
+E -> AUTH : iniciarSesion(correo, contrasena)
+activate AUTH
+
+AUTH -> USR : validarCredenciales(correo, contrasena)
+activate USR
+USR --> AUTH : usuarioValido / credencialesInvalidas
+deactivate USR
+
+alt Credenciales válidas
+    AUTH -> JWT : generarToken(usuario, rol)
+    activate JWT
+    JWT --> AUTH : tokenJWT
+    deactivate JWT
+    
+    AUTH -> AUD : registrarLogin(usuario, IP, dispositivo)
+    activate AUD
+    AUD --> AUTH : eventoRegistrado
+    deactivate AUD
+    
+    AUTH --> E : tokenJWT + dashboardPersonalizado
+    
+else Credenciales inválidas
+    AUTH -> AUTH : incrementarIntentosFallidos(correo)
+    AUTH --> E : error: "Credenciales inválidas. Intento X de 5"
+end
+
+deactivate AUTH
+
+== Registro de Nueva Cuenta ==
+E -> AUTH : registrarCuenta(nombre, correo, contrasena, rol)
+activate AUTH
+
+AUTH -> USR : verificarCorreoUnico(correo)
+activate USR
+USR --> AUTH : correoDisponible / correoExistente
+deactivate USR
+
+alt Correo disponible
+    AUTH -> USR : crearUsuario(datos)
+    activate USR
+    USR --> AUTH : usuarioCreado
+    deactivate USR
+    
+    AUTH -> MAIL : enviarVerificacion(correo, token)
+    activate MAIL
+    MAIL --> AUTH : correoEnviado
+    deactivate MAIL
+    
+    AUTH --> E : "Cuenta creada. Verifica tu correo en 24h."
+    
+else Correo existente
+    AUTH --> E : error: "Correo ya registrado"
+end
+
+deactivate AUTH
+
+== Recuperación de Contraseña ==
+E -> AUTH : solicitarRecuperacion(correo)
+activate AUTH
+
+AUTH -> USR : buscarUsuarioPorCorreo(correo)
+activate USR
+USR --> AUTH : usuarioEncontrado / noExiste
+deactivate USR
+
+alt Usuario encontrado
+    AUTH -> MAIL : enviarEnlaceRecuperacion(correo, tokenTemporal)
+    activate MAIL
+    MAIL --> AUTH : enlaceEnviado
+    deactivate MAIL
+    
+    AUTH --> E : "Enlace enviado. Válido por 24 horas."
+    
+else Usuario no existe
+    AUTH --> E : error: "Correo no registrado"
+end
+
+deactivate AUTH
+
+@enduml

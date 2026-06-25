@@ -1,0 +1,124 @@
+@startuml
+title Diagrama de Secuencia - Gestionar IA y Recomendaciones (CU-11)
+
+actor "est: Estudiante" as E
+actor "prof: Profesor" as P
+participant "ia: IAService" as IA
+participant "rec: MotorRecomendacion" as REC
+participant "llm: LLMService" as LLM
+participant "plan: PlanificacionService" as PLAN
+participant "pred: PredictorDesempeno" as PRED
+participant "db: BaseDeDatos" as DB
+
+== Recomendar Ejercicios ==
+E -> IA : solicitarRecomendacion(tipo)
+activate IA
+
+alt Datos insuficientes
+    IA --> E : ejerciciosGenericos(nivelIntermedio)
+    
+else Datos suficientes
+    IA -> REC : analizarHistorial(estudiante)
+    activate REC
+    
+    REC -> DB : obtenerHistorialErrores(estudiante)
+    activate DB
+    DB --> REC : erroresPorArea
+    deactivate DB
+    
+    REC -> REC : identificarAreasDebiles(umbralError: 40%)
+    REC --> IA : areasDebilidad, ejerciciosSugeridos
+    deactivate REC
+    
+    IA -> DB : obtenerEjerciciosEJP(areasDebilidad)
+    activate DB
+    DB --> IA : ejerciciosPersonalizados
+    deactivate DB
+    
+    IA --> E : recomendacionesPersonalizadas(ejercicios, justificacion)
+end
+
+deactivate IA
+
+== Asistente IA (Responder Dudas) ==
+E -> IA : consultarDuda(dudaLenguajeNatural)
+activate IA
+
+IA -> LLM : procesarConsulta(duda, contextoEstudiante)
+activate LLM
+
+LLM -> LLM : analizarNLP(duda)
+LLM -> LLM : buscarConceptosMatematicos()
+LLM -> LLM : generarExplicacionPasoAPaso()
+
+alt Duda resoluble con confianza
+    LLM --> IA : explicacionDetallada, sinRespuestaFinal
+    deactivate LLM
+    
+    IA --> E : respuestaIA(explicacion, conceptosRelacionados)
+    
+else Duda muy compleja o ambigua
+    LLM --> IA : confianzaBaja, contextoCompleto
+    deactivate LLM
+    
+    IA -> NOTIF : escalarAProfesor(estudiante, duda, contexto)
+    activate NOTIF
+    NOTIF --> IA : notificacionEnviada
+    deactivate NOTIF
+    
+    IA --> E : mensaje: "Profesor notificado. Respuesta en 24h."
+end
+
+deactivate IA
+
+== Generar Plan de Estudio ==
+E -> IA : solicitarPlanEstudio(metas)
+activate IA
+
+IA -> PLAN : generarRutaSemanal(estudiante, metas)
+activate PLAN
+
+PLAN -> DB : obtenerProgresoActual(estudiante)
+activate DB
+DB --> PLAN : temasCompletados, pendientes
+deactivate DB
+
+PLAN -> DB : obtenerExamenesProximos(estudiante)
+activate DB
+DB --> PLAN : fechasExamenes
+deactivate DB
+
+PLAN -> PLAN : distribuirTemas(tiempoDisponible, prioridad)
+PLAN -> PLAN : ajustarPorRitmoAprendizaje(estudiante)
+
+PLAN --> IA : planSemanalPersonalizado
+deactivate PLAN
+
+IA --> E : planEstudio(semanas, temasDiarios, recordatorios)
+deactivate IA
+
+== Predecir Desempeño ==
+P -> IA : consultarPrediccion(estudiante, examen)
+activate IA
+
+IA -> PRED : predecirNota(estudiante, examen)
+activate PRED
+
+PRED -> DB : obtenerDesempenoHistorico(estudiante)
+activate DB
+DB --> PRED : historialCompleto
+deactivate DB
+
+PRED -> PRED : compararConCohortes(cohortesSimilares)
+PRED -> PRED : calcularProbabilidadAprobacion()
+PRED -> PRED : identificarRiesgos()
+
+PRED --> IA : prediccionDetallada
+deactivate PRED
+
+IA --> P : prediccion(notaProbable, areasRiesgo, intervencionesSugeridas)
+deactivate IA
+
+deactivate E
+deactivate P
+@enduml

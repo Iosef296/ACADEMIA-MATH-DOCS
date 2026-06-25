@@ -1,0 +1,198 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Usuarios (CU-18)
+
+actor "adm: Administrador" as ADM
+actor "est: Estudiante" as E
+actor "prof: Profesor" as P
+actor "apod: Apoderado" as APO
+participant "usr: UsuarioService" as USR
+participant "rol: RolService" as ROL
+participant "verif: VerificacionIdentidad" as VER
+participant "auth: AutenticacionService" as AUTH
+participant "audit: AuditoriaService" as AUD
+participant "db: BaseDeDatos" as DB
+
+== Crear Usuario ==
+ADM -> USR : crearUsuario(datos, rol)
+activate USR
+
+USR -> USR : validarDatos(datos)
+USR -> USR : verificarFormatoCorreo(correo)
+
+USR -> DB : verificarCorreoUnico(correo)
+activate DB
+DB --> USR : disponible / existente
+deactivate DB
+
+alt Correo disponible
+    USR -> AUTH : generarContrasenaTemporal()
+    activate AUTH
+    AUTH --> USR : contrasenaTemporal
+    deactivate AUTH
+    
+    USR -> DB : guardarUsuario(datos, rol, contrasenaHash)
+    activate DB
+    DB --> USR : idUsuario
+    deactivate DB
+    
+    USR -> ROL : asignarPermisos(idUsuario, rol)
+    activate ROL
+    ROL -> DB : guardarPermisos(idUsuario, permisosRol)
+    activate DB
+    DB --> ROL : confirmacion
+    deactivate DB
+    ROL --> USR : permisosAsignados
+    deactivate ROL
+    
+    USR -> MAIL : enviarBienvenida(correo, credencialesTemporales)
+    activate MAIL
+    MAIL --> USR : correoEnviado
+    deactivate MAIL
+    
+    USR --> ADM : usuarioCreado(idUsuario, correoEnviado)
+    
+else Correo existente
+    USR --> ADM : error: "Correo ya registrado"
+end
+
+deactivate USR
+
+== Vincular Apoderado (para menores) ==
+ADM -> USR : vincularApoderado(idEstudiante, datosApoderado)
+activate USR
+
+USR -> VER : verificarDocumentoIdentidad(documentoApoderado)
+activate VER
+VER --> USR : documentoValido
+deactivate VER
+
+USR -> USR : crearCuentaApoderadoLimitada(datosApoderado)
+
+USR -> DB : guardarVinculacion(idEstudiante, idApoderado, permisos)
+activate DB
+DB --> USR : confirmacion
+deactivate DB
+
+USR -> MAIL : enviarCredencialesApoderado(correoApoderado, accesoLimitado)
+activate MAIL
+MAIL --> USR : correoEnviado
+deactivate MAIL
+
+USR --> ADM : apoderadoVinculado
+deactivate USR
+
+== Editar Perfil ==
+E -> USR : actualizarPerfil(datos)
+activate USR
+
+USR -> USR : validarCambios(datos)
+
+alt Cambio de correo
+    USR -> AUTH : requerirVerificacionAdicional(token2FA)
+    activate AUTH
+    AUTH --> E : solicitarCodigoVerificacion()
+    
+    E -> AUTH : enviarCodigo(codigo)
+    AUTH --> USR : verificacionExitosa
+    deactivate AUTH
+end
+
+USR -> DB : actualizarUsuario(idUsuario, datos)
+activate DB
+DB --> USR : confirmacion
+deactivate DB
+
+USR --> E : perfilActualizado
+deactivate USR
+
+== Configurar 2FA ==
+E -> AUTH : configurar2FA(metodo)
+activate AUTH
+
+alt App Autenticador
+    AUTH -> AUTH : generarQRSecret()
+    AUTH --> E : mostrarQR, codigoManual
+    
+    E -> AUTH : confirmarCodigo(codigoVerificacion)
+    AUTH --> E : 2FAActivado
+    
+else SMS
+    AUTH -> SMS : enviarCodigoConfirmacion(telefono)
+    activate SMS
+    SMS --> AUTH : smsEnviado
+    deactivate SMS
+    
+    E -> AUTH : confirmarCodigo(codigoSMS)
+    AUTH --> E : 2FAActivado
+    
+else Email
+    AUTH -> MAIL : enviarCodigoConfirmacion(correo)
+    activate MAIL
+    MAIL --> AUTH : correoEnviado
+    deactivate MAIL
+    
+    E -> AUTH : confirmarCodigo(codigoEmail)
+    AUTH --> E : 2FAActivado
+end
+
+deactivate AUTH
+
+== Desactivar/Eliminar Cuenta ==
+ADM -> USR : desactivarCuenta(idUsuario, motivo)
+activate USR
+
+USR -> DB : verificarDependenciasActivas(idUsuario)
+activate DB
+DB --> USR : cursosActivos, suscripcionActiva, deudas
+deactivate DB
+
+alt Sin dependencias críticas
+    USR -> DB : desactivarUsuario(idUsuario, motivo)
+    activate DB
+    DB --> USR : confirmacion
+    deactivate DB
+    
+    USR -> AUD : registrarDesactivacion(idUsuario, motivo, admin)
+    activate AUD
+    AUD --> USR : eventoRegistrado
+    deactivate AUD
+    
+    USR --> ADM : cuentaDesactivada
+    
+else Dependencias activas
+    USR --> ADM : advertencia: "Tiene [X] cursos activos. Confirmar migración o esperar finalización."
+end
+
+deactivate USR
+
+== Carga Masiva por CSV ==
+ADM -> USR : cargarUsuariosCSV(archivo)
+activate USR
+
+USR -> USR : validarFormatoCSV(archivo)
+USR -> USR : procesarFilas()
+
+loop Por cada fila
+    alt Fila válida
+        USR -> DB : crearUsuario(datosFila)
+        activate DB
+        DB --> USR : usuarioCreado
+        deactivate DB
+    else Fila con error
+        USR -> USR : registrarError(fila, motivo)
+    end
+end
+
+USR -> EXP : generarReporteResultados(exitosos, errores)
+activate EXP
+EXP --> USR : reporteDescargable
+deactivate EXP
+
+USR --> ADM : cargaCompletada(reporte)
+deactivate USR
+
+deactivate ADM
+deactivate E
+deactivate P
+deactivate APO
+@enduml

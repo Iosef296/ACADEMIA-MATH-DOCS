@@ -1,0 +1,36 @@
+@startuml
+title Diagrama de Estado - Gestionar Pagos y Suscripciones (CU-15)
+
+[*] --> ExplorandoPlanes
+
+ExplorandoPlanes --> SeleccionandoPlan : elegirPlan()
+SeleccionandoPlan --> AplicandoDescuentos : codigoPromocional()
+
+AplicandoDescuentos --> SeleccionandoMetodoPago : totalCalculado
+SeleccionandoMetodoPago --> ProcesandoPago : confirmar()
+
+ProcesandoPago --> ValidandoAntifraud : datosTokenizados()
+ValidandoAntifraud --> ProcesandoPago : transaccionRechazada
+ValidandoAntifraud --> PagoAprobado : transaccionAprobada
+
+PagoAprobado --> ActivandoSuscripcion : comprobanteGenerado
+ActivandoSuscripcion --> SuscripcionActiva : beneficiosAsignados
+
+SuscripcionActiva --> EnviandoConfirmacion : notificacionEnviada
+EnviandoConfirmacion --> AccesoContenidoPremium : confirmacionRecibida
+
+SuscripcionActiva --> RecordandoRenovacion : 7diasAntesVencimiento()
+RecordandoRenovacion --> RecordandoRenovacion : 3diasAntes
+RecordandoRenovacion --> RecordandoUrgente : 1diaAntes
+
+RecordandoUrgente --> CobrandoAutomatico : renovacionActiva
+CobrandoAutomatico --> SuscripcionActiva : cobroExitoso
+CobrandoAutomatico --> PeriodoGracia : tarjetaVencida
+
+PeriodoGracia --> SuscripcionActiva : pagoActualizado
+PeriodoGracia --> SuscripcionSuspendida : graciaExpirada
+
+SuscripcionSuspendida --> ExplorandoPlanes : reactivar()
+
+AccesoContenidoPremium --> [*] : cancelarSuscripcion()
+@enduml

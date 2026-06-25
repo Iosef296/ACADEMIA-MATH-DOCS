@@ -1,0 +1,40 @@
+@startjson
+{
+  "Caso de uso": "Gestionar Sistema de Notificaciones Multicanal",
+  "Id": "CU-13",
+  "Breve descripcion": "El sistema envia alertas personalizadas y contextualizadas a usuarios sobre eventos academicos, recordatorios de estudio inteligentes, inicio de clases en vivo, vencimientos de suscripcion y comunicados institucionales masivos.",
+  "Actores primarios": "Estudiante, Profesor, Administrador",
+  "Actores secundarios": "Servicio de Push Movil, Servicio de Email (SMTP), Servicio de SMS, Programador de Tareas Inteligente, Motor de Segmentacion",
+  "Precondiciones": [
+    "El usuario tiene configuradas preferencias de notificacion: canales activos (in-app, push, email, SMS), frecuencia maxima diaria, horario de no molestar.",
+    "Los permisos de notificaciones push estan concedidos en dispositivos moviles y navegadores.",
+    "El modulo de notificaciones esta activo y los servicios externos (email, SMS, push) estan configurados con credenciales validas."
+  ],
+  "Flujo principal": {
+    "1": "Ocurre un evento disparador en el sistema: publicacion de nuevo contenido, inicio de clase en vivo en 15 minutos, examen programado para manana, recordatorio de estudio, vencimiento de suscripcion en 3 dias, comunicado masivo del administrador.",
+    "2": "El sistema (Notificaciones Service) evalua si el evento aplica al usuario especifico segun sus preferencias configuradas, rol, cursos matriculados y historial de engagement.",
+    "3": "El sistema determina el canal de envio optimo: in-app para no urgentes, push movil para moderadas, email para detalladas, SMS para criticas, o combinacion segun nivel de urgencia del evento.",
+    "4": "Para recordatorios de estudio inteligentes: el sistema (Programador de Tareas) analiza patrones historicos del usuario (horarios de mayor productividad, frecuencia optima) y calcula el horario de envio mas efectivo.",
+    "5": "El sistema genera el mensaje personalizado con datos relevantes del evento: nombre del curso, titulo del contenido, tiempo restante, enlace directo de accion.",
+    "6": "El sistema envia la notificacion por el canal determinado, registra el intento de entrega en el historial del usuario y marca como 'Enviada'.",
+    "7": "El usuario recibe la notificacion y puede: marcar como leida, archivar para despues, responder directamente (si aplica), o acceder a configuracion de preferencias.",
+    "8": "El sistema rastrea tasa de apertura, tiempo hasta apertura, tasa de clic en el enlace de accion y engagement general para optimizar futuras notificaciones mediante aprendizaje automatico.",
+    "9": "Para comunicados masivos del administrador: el sistema permite segmentar destinatarios por criterios (todos los usuarios, por curso especifico, por plan de suscripcion, por rol) y envia de forma escalonada para no saturar servicios.",
+    "10": "El administrador visualiza estadisticas completas de entrega: enviados, entregados, abiertos, clics, rebotes y desuscripciones del comunicado."
+  },
+  "Postcondiciones": [
+    "El usuario esta informado de eventos relevantes sin sufrir saturacion de notificaciones (frecuencia controlada).",
+    "El historial completo de notificaciones queda disponible para consulta en el perfil del usuario.",
+    "Las preferencias del usuario se respetan estrictamente en todos los envios futuros.",
+    "El administrador tiene metricas de efectividad para optimizar futuras campanas de comunicacion."
+  ],
+  "Flujos alternativos": {
+    "A1: Usuario en modo No Molestar": "Las notificaciones no urgentes se acumulan silenciosamente y se entregan en lote al salir del modo No Molestar; las urgentes (seguridad, desercion) respetan el modo pero se resaltan visualmente al reanudar.",
+    "A2: Dispositivo sin conexion en momento de envio": "El sistema encola notificaciones push y las reintenta automaticamente cuando detecta reconexion del dispositivo, con limite de 3 reintentos espaciados.",
+    "A3: Email rebota (bounce)": "El sistema detecta rebote, marca el email como potencialmente invalido, notifica al usuario para actualizar su correo y prueba canal alternativo (push o in-app) para notificaciones criticas.",
+    "A4: Notificacion no deseada o spam percibido": "El usuario puede desuscribirse de una categoria especifica de notificaciones (ej: marketing, recordatorios) sin afectar otras categorias criticas (seguridad, examenes).",
+    "A5: Urgencia critica que ignora preferencias": "Para alertas de seguridad (acceso sospechoso), riesgo de desercion academica detectada por IA, o fallo de pago, el sistema ignora temporalmente las preferencias de horario y envia inmediatamente por todos los canales disponibles.",
+    "A6: Fatiga de notificaciones detectada": "Si el sistema detecta que el usuario ignora consistentemente mas del 80% de notificaciones de una categoria, reduce automaticamente la frecuencia de esa categoria y sugiere al usuario ajustar preferencias."
+  }
+}
+@endjson

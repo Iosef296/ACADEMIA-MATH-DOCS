@@ -1,0 +1,120 @@
+@startuml HU-ADM-administracion
+
+left to right direction
+
+title Modulo de Administracion
+
+skinparam backgroundColor #1A1A2E
+skinparam actor {
+    BackgroundColor #FF9900
+    BorderColor #FF6600
+    FontColor #FFFFFF
+}
+skinparam usecase {
+    BackgroundColor #232F3E
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam package {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FF9900
+}
+skinparam arrowColor #FF9900
+skinparam note {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+skinparam legend {
+    BackgroundColor #2D3748
+    BorderColor #FF9900
+    FontColor #FFFFFF
+}
+
+actor "Administrador" as ADM
+
+package "Academia Virtual de Matematicas" {
+    package "Administracion" {
+
+        usecase "Ver dashboard con\nmetricas clave" as ADM01
+
+        usecase "Publicar, archivar o\ndespublicar cursos" as ADM02
+
+        usecase "Enviar comunicados a\ntodos los usuarios" as ADM03
+
+        usecase "Recibir alertas de\nerrores criticos" as ADM04
+
+        usecase "Gestionar SEO de\npaginas de cursos" as ADM05
+
+        usecase "Gestionar usuarios y\nroles del sistema" as ADM06
+
+        usecase "Ver reporte de\nestudiantes activos" as ADM07
+
+        usecase "Configurar permisos por\nrol de usuario" as ADM08
+
+        usecase "Ver ingresos y\nsuscripciones activas" as ADM09
+    }
+}
+
+ADM --> ADM01
+ADM --> ADM02
+ADM --> ADM03
+ADM --> ADM04
+ADM --> ADM05
+ADM --> ADM06
+ADM --> ADM07
+ADM --> ADM08
+ADM --> ADM09
+
+ADM01 ..> ADM07 : <<include>>
+ADM01 ..> ADM09 : <<include>>
+
+ADM06 ..> ADM08 : <<include>>
+
+ADM03 ..> ADM04 : <<extend>>
+
+note right of ADM01
+  El dashboard muestra metricas en tiempo real:
+  - Estudiantes activos diarios/mensuales
+  - Cursos mas populares
+  - Ingresos del mes
+  - Alertas pendientes
+  - Tasa de finalizacion de cursos
+end note
+
+note right of ADM02
+  El administrador puede:
+  - Publicar curso nuevo
+  - Archivar curso (oculto pero accesible)
+  - Despublicar curso (completamente oculto)
+  - Programar publicacion para fecha futura
+end note
+
+note right of ADM03
+  Los comunicados masivos permiten:
+  - Enviar a todos los usuarios
+  - Filtrar por curso, plan o rol
+  - Programar envio para fecha futura
+  - Ver estadisticas de apertura
+end note
+
+note right of ADM05
+  Gestion SEO incluye:
+  - Meta titulo y descripcion por curso
+  - URL amigables
+  - Sitemap XML
+  - Integracion con Google Analytics
+end note
+
+legend right
+
+| |= LEYENDA - Administracion | |
+| --> | Asociacion actor -> caso de uso |
+| ..> | Dependencia UML |
+| <<include>> | Flujo obligatorio |
+| <<extend>> | Flujo alternativo |
+
+endlegend
+
+@enduml
