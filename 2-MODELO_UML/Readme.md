@@ -1,13 +1,44 @@
-readme_content = """# 📐 Academia Virtual de Matemáticas - Documentación UML
+# 📐 Academia Virtual de Matematicas - Documentacion UML 
+ 
+Proyecto de documentacion UML completo para la plataforma educativa **Academia Virtual de Matematicas**. 
+ 
+## Estructura del Proyecto 
+ 
+- **Comportamiento/**: Diagramas de comportamiento del sistema 
+  - `1-Casos_Uso/`: 18 Diagramas de Casos de Uso (CU01-CU18) 
+  - `2-Secuencias/`: 18 Diagramas de Secuencia (DS01-DS18) 
+  - `3-Estados/`: 18 Diagramas de Estado (DE01-DE18) 
+  - `Especificaciones/`: 18 Especificaciones de Casos de Uso (ECU01-ECU18) 
+- **Estructural/**: Diagramas estructurales del sistema 
+  - Diagrama de clases principal 
+ 
+## Modulos del Sistema (18 Casos de Uso) 
+ 
+| ID | Modulo | Caso de Uso | Actor Principal | 
+| CU-01 | ADM | Administrar Dashboard | Administrador | 
+| CU-02 | AUD | Gestionar Auditoria y Logs | Administrador | 
+| CU-03 | AUT | Autenticar Usuario | Estudiante, Profesor, Administrador | 
+| CU-04 | BAN | Gestionar Banco de Preguntas | Profesor | 
+| CU-05 | CFG | Configurar Sistema | Administrador | 
+| CU-06 | CLV | Gestionar Clases en Vivo | Profesor, Estudiante | 
+| CU-07 | CON | Gestionar Contenido Educativo | Profesor, Estudiante | 
+| CU-08 | EJP | Gestionar Ejercicios Parametrizados | Profesor, Estudiante | 
+| CU-09 | EXA | Gestionar Examenes | Profesor, Estudiante | 
+| CU-10 | GAM | Gestionar Gamificacion | Estudiante | 
+| CU-11 | IAR | Gestionar IA y Recomendaciones | Estudiante, Profesor | 
+| CU-12 | INT | Gestionar Foro e Interaccion | Estudiante, Profesor | 
+| CU-13 | NOT | Gestionar Notificaciones | Estudiante, Profesor, Administrador | 
+| CU-14 | OCR | Gestionar PDF y OCR | Profesor | 
+| CU-15 | PAG | Gestionar Pagos y Suscripciones | Estudiante, Administrador | 
+| CU-16 | PRO | Gestionar Progreso y Rutinas | Estudiante | 
+| CU-17 | RPT | Gestionar Reportes y Analytics | Profesor, Administrador | 
+| CU-18 | USR | Gestionar Usuarios | Administrador, Estudiante, Profesor | 
 
-> Proyecto de documentación UML completo para la plataforma educativa **Academia Virtual de Matemáticas**.
-> Plataforma integral para la enseñanza y aprendizaje de matemáticas a nivel universitario, con soporte de IA, ejercicios parametrizados, gamificación y clases en vivo.
+## Readme_content = """# 📐 Academia Virtual de Matemáticas - Documentación UML
 
----
+Proyecto de documentación UML completo para la plataforma educativa Academia Virtual de Matemáticas. Plataforma integral para la enseñanza y aprendizaje de matemáticas a nivel universitario, con soporte de IA, ejercicios parametrizados, gamificación y clases en vivo.
 
-## 🏗️ Estructura del Proyecto
-
-```
+🏗️ Estructura del Proyecto
 2-MODELO_UML/
 ├── Comportamiento/
 │   ├── 1-Casos_Uso/                    ← 18 Diagramas de Casos de Uso (CU01-CU18)
@@ -94,111 +125,71 @@ readme_content = """# 📐 Academia Virtual de Matemáticas - Documentación UML
 │   └── diagrama-clases-Academia Virtual de Matematicas.puml
 │
 └── README.md
-```
-
----
-
-## 📋 Módulos del Sistema (18 Casos de Uso)
-
-| ID | Módulo | Caso de Uso | Actor Principal |
-|:---|:---|:---|:---|
-| CU-01 | **ADM** | Gestionar Dashboard Administrativo | Administrador |
-| CU-02 | **AUD** | Gestionar Auditoría y Logs del Sistema | Administrador |
-| CU-03 | **AUT** | Autenticar y Gestionar Sesiones de Usuario | Estudiante, Profesor, Administrador |
-| CU-04 | **BAN** | Gestionar Banco de Preguntas Matemáticas | Profesor |
-| CU-05 | **CFG** | Configurar Parámetros Globales del Sistema | Administrador |
-| CU-06 | **CLV** | Gestionar Clases en Vivo y Grabaciones | Profesor, Estudiante |
-| CU-07 | **CON** | Gestionar Contenido Educativo y Temas | Profesor, Estudiante |
-| CU-08 | **EJP** | Gestionar Ejercicios Parametrizados Adaptativos | Profesor, Estudiante |
-| CU-09 | **EXA** | Gestionar Exámenes y Evaluaciones | Profesor, Estudiante |
-| CU-10 | **GAM** | Gestionar Sistema de Gamificación y Recompensas | Estudiante |
-| CU-11 | **IAR** | Gestionar Inteligencia Artificial y Recomendaciones | Estudiante, Profesor |
-| CU-12 | **INT** | Gestionar Foro e Interacción Comunitaria | Estudiante, Profesor |
-| CU-13 | **NOT** | Gestionar Sistema de Notificaciones Multicanal | Estudiante, Profesor, Administrador |
-| CU-14 | **OCR** | Gestionar Digitalización de PDF con OCR | Profesor |
-| CU-15 | **PAG** | Gestionar Pagos y Suscripciones | Estudiante, Administrador |
-| CU-16 | **PRO** | Gestionar Progreso Académico y Rutinas de Estudio | Estudiante |
-| CU-17 | **RPT** | Gestionar Reportes y Analytics Educativos | Profesor, Administrador |
-| CU-18 | **USR** | Gestionar Usuarios y Perfiles del Sistema | Administrador, Estudiante, Profesor |
-
----
-
-## 📊 Resumen de Entregables UML
-
-| Tipo | Cantidad | Ubicación | Descripción |
-|:---|:---:|:---|:---|
-| Diagramas de Casos de Uso (CU) | 18 | `Comportamiento/1-Casos_Uso/` | Diagramas de casos de uso por módulo |
-| Especificaciones de Casos de Uso (ECU) | 18 | `Comportamiento/1-Casos_Uso/Especificaciones/` | Especificaciones detalladas en formato estructurado |
-| Diagramas de Secuencia (DS) | 18 | `Comportamiento/2-Secuencias/` | Flujo de interacción entre actores y sistema |
-| Diagramas de Estado (DE) | 18 | `Comportamiento/3-Estados/` | Estados y transiciones de cada caso de uso |
-| Diagrama de Clases | 1 | `Estructural/` | Modelo de dominio del sistema completo |
-| **Total** | **73** | | **Archivos de documentación UML** |
-
----
-
-## 🛠️ Tecnologías del Sistema
-
-### Stack Técnico
-| Tecnología | Uso |
-|:---|:---|
-| **Java / Spring Boot** | Backend principal del sistema |
-| **Maven** | Gestión de dependencias y build |
-| **PlantUML** | Generación de diagramas UML desde código |
-| **Arquitectura de Microservicios** | Diseño escalable del sistema |
-| **Docker** | Contenedores y despliegue |
-| **PostgreSQL** | Base de datos relacional |
-| **Redis** | Cache y sesiones en memoria |
-
-### Herramientas de Modelado
-| Tecnología | Uso |
-|:---|:---|
-| **PlantUML** | Diagramas UML (casos de uso, secuencia, estado, clases) |
-| **Modelo C4** | Arquitectura de software en 4 niveles |
-| **JSON** | Especificaciones estructuradas de casos de uso |
-| **Git/GitHub** | Control de versiones y colaboración en equipo |
-
----
-
-## 🚀 Cómo Visualizar los Diagramas
-
-### Opción 1: Extensión VS Code (Recomendado)
-1. Instala la extensión **"PlantUML"** de Jebbs
-2. Abre cualquier archivo `.puml`
-3. Presiona `Alt + D` para ver el diagrama en tiempo real
-
-### Opción 2: Servidor PlantUML Online
-- Visita [www.plantuml.com/plantuml](http://www.plantuml.com/plantuml)
-- Pega el contenido del archivo `.puml`
-
-### Opción 3: PlantUML Local
-```bash
+📋 Módulos del Sistema (18 Casos de Uso)
+ID	Módulo	Caso de Uso	Actor Principal
+CU-01	ADM	Gestionar Dashboard Administrativo	Administrador
+CU-02	AUD	Gestionar Auditoría y Logs del Sistema	Administrador
+CU-03	AUT	Autenticar y Gestionar Sesiones de Usuario	Estudiante, Profesor, Administrador
+CU-04	BAN	Gestionar Banco de Preguntas Matemáticas	Profesor
+CU-05	CFG	Configurar Parámetros Globales del Sistema	Administrador
+CU-06	CLV	Gestionar Clases en Vivo y Grabaciones	Profesor, Estudiante
+CU-07	CON	Gestionar Contenido Educativo y Temas	Profesor, Estudiante
+CU-08	EJP	Gestionar Ejercicios Parametrizados Adaptativos	Profesor, Estudiante
+CU-09	EXA	Gestionar Exámenes y Evaluaciones	Profesor, Estudiante
+CU-10	GAM	Gestionar Sistema de Gamificación y Recompensas	Estudiante
+CU-11	IAR	Gestionar Inteligencia Artificial y Recomendaciones	Estudiante, Profesor
+CU-12	INT	Gestionar Foro e Interacción Comunitaria	Estudiante, Profesor
+CU-13	NOT	Gestionar Sistema de Notificaciones Multicanal	Estudiante, Profesor, Administrador
+CU-14	OCR	Gestionar Digitalización de PDF con OCR	Profesor
+CU-15	PAG	Gestionar Pagos y Suscripciones	Estudiante, Administrador
+CU-16	PRO	Gestionar Progreso Académico y Rutinas de Estudio	Estudiante
+CU-17	RPT	Gestionar Reportes y Analytics Educativos	Profesor, Administrador
+CU-18	USR	Gestionar Usuarios y Perfiles del Sistema	Administrador, Estudiante, Profesor
+📊 Resumen de Entregables UML
+Tipo	Cantidad	Ubicación	Descripción
+Diagramas de Casos de Uso (CU)	18	Comportamiento/1-Casos_Uso/	Diagramas de casos de uso por módulo
+Especificaciones de Casos de Uso (ECU)	18	Comportamiento/1-Casos_Uso/Especificaciones/	Especificaciones detalladas en formato estructurado
+Diagramas de Secuencia (DS)	18	Comportamiento/2-Secuencias/	Flujo de interacción entre actores y sistema
+Diagramas de Estado (DE)	18	Comportamiento/3-Estados/	Estados y transiciones de cada caso de uso
+Diagrama de Clases	1	Estructural/	Modelo de dominio del sistema completo
+Total	73		Archivos de documentación UML
+🛠️ Tecnologías del Sistema
+Stack Técnico
+Tecnología	Uso
+Java / Spring Boot	Backend principal del sistema
+Maven	Gestión de dependencias y build
+PlantUML	Generación de diagramas UML desde código
+Arquitectura de Microservicios	Diseño escalable del sistema
+Docker	Contenedores y despliegue
+PostgreSQL	Base de datos relacional
+Redis	Cache y sesiones en memoria
+Herramientas de Modelado
+Tecnología	Uso
+PlantUML	Diagramas UML (casos de uso, secuencia, estado, clases)
+Modelo C4	Arquitectura de software en 4 niveles
+JSON	Especificaciones estructuradas de casos de uso
+Git/GitHub	Control de versiones y colaboración en equipo
+🚀 Cómo Visualizar los Diagramas
+Opción 1: Extensión VS Code (Recomendado)
+Instala la extensión "PlantUML" de Jebbs
+Abre cualquier archivo .puml
+Presiona Alt + D para ver el diagrama en tiempo real
+Opción 2: Servidor PlantUML Online
+Visita www.plantuml.com/plantuml
+Pega el contenido del archivo .puml
+Opción 3: PlantUML Local
 java -jar plantuml.jar archivo.puml
-```
+👥 Equipo de Desarrollo
+Miembro	Rama	Contribución
+Emerson	emerson-avance	Diagramas CU, ECU, DS, DE, README
+Joaquín	avance-joaquin	...
+Cristofer	cristofer-avance	...
+📜 Licencia
+Proyecto académico - Universidad - 2026. Todos los derechos reservados.
 
----
+Nota: Este repositorio contiene exclusivamente la documentación del modelo UML para el proyecto de la Academia Virtual de Matemáticas. Para el código fuente del sistema, consultar el repositorio principal del proyecto. """
 
-## 👥 Equipo de Desarrollo
+Guardar el archivo
+with open('/mnt/agents/output/README.md', 'w', encoding='utf-8') as f: f.write(readme_content)
 
-| Miembro | Rama | Contribución |
-|:---|:---|:---|
-| Emerson | `emerson-avance` | Diagramas CU, ECU, DS, DE, README |
-| Joaquín | `avance-joaquin` | ... |
-| Cristofer | `cristofer-avance` | ... |
-
----
-
-## 📜 Licencia
-
-Proyecto académico - Universidad - 2026.
-Todos los derechos reservados.
-
-> **Nota:** Este repositorio contiene exclusivamente la documentación del modelo UML para el proyecto de la Academia Virtual de Matemáticas. Para el código fuente del sistema, consultar el repositorio principal del proyecto.
-"""
-
-# Guardar el archivo
-with open('/mnt/agents/output/README.md', 'w', encoding='utf-8') as f:
-    f.write(readme_content)
-
-print("README.md generado correctamente.")
-print(f"Tamaño: {len(readme_content)} caracteres")
----
+print("README.md generado correctamente.") print(f"Tamaño: {len(readme_content)} caracteres")
