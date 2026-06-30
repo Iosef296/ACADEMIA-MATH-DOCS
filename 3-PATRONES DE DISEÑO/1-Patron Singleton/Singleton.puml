@@ -1,0 +1,67 @@
+@startuml
+!theme cerulean-outline
+
+title Patron Singleton - Academia Virtual de Matematicas
+
+' Oculta miembros vacios para diagrama limpio
+hide empty members
+
+class Main {
+    + main(args: String[]): void
+}
+
+class ConfiguracionAcademia <<Singleton>> {
+    {static} - instancia : ConfiguracionAcademia
+    - nombrePlataforma : String
+    - version : String
+    - urlBaseDatos : String
+    - modoMantenimiento : boolean
+    - maximoEstudiantesPorClase : int
+    - apiKeyIA : String
+    __
+    - ConfiguracionAcademia()
+    {static} + getInstance() : ConfiguracionAcademia
+    + mostrarConfiguracion() : void
+    + getNombrePlataforma() : String
+    + getVersion() : String
+    + isModoMantenimiento() : boolean
+    + setModoMantenimiento(boolean) : void
+}
+
+' Relaciones
+Main ..> ConfiguracionAcademia : usa >
+ConfiguracionAcademia --> ConfiguracionAcademia : {static} instancia
+
+' Nota explicativa del patron
+note right of ConfiguracionAcademia
+  <b>Patron Singleton</b>
+
+  Garantiza una unica instancia de
+  la configuracion global del sistema.
+
+  <b>getInstance():</b>
+  if (instancia == null) {
+      instancia = new ConfiguracionAcademia();
+  }
+  return instancia;
+end note
+
+' Nota de contexto de la academia
+note bottom of ConfiguracionAcademia
+  <b>Contexto: Academia Virtual de Matematicas</b>
+
+  • Nombre de plataforma
+  • Version del sistema
+  • URL de base de datos
+  • Modo mantenimiento
+  • Maximo estudiantes/clase
+  • API Key de IA (recomendaciones)
+end note
+
+legend right
+  |= Color |= Significado |
+  | <#LightBlue> | Clase Singleton |
+  | <#LightGray> | Cliente que la utiliza |
+endlegend
+
+@enduml
