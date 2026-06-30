@@ -1,0 +1,35 @@
+@startuml
+title Diagrama de Estado - Autenticar Usuario (CU-03)
+
+[*] --> NoAutenticado
+
+NoAutenticado --> ValidandoCredenciales : iniciarSesion()
+NoAutenticado --> RegistrandoCuenta : crearCuenta()
+NoAutenticado --> RecuperandoContrasena : olvideContrasena()
+
+ValidandoCredenciales --> Autenticado : credencialesValidas
+ValidandoCredenciales --> NoAutenticado : credencialesInvalidas
+ValidandoCredenciales --> CuentaBloqueada : intentosSuperados()
+
+Autenticado --> Verificando2FA : requiere2FA()
+Verificando2FA --> SesionActiva : codigoCorrecto
+Verificando2FA --> Autenticado : codigoIncorrecto
+
+SesionActiva --> DashboardPersonalizado : redirigirPorRol()
+SesionActiva --> NoAutenticado : cerrarSesion()
+SesionActiva --> NoAutenticado : sesionExpirada()
+
+RegistrandoCuenta --> VerificandoCorreo : datosValidos
+RegistrandoCuenta --> NoAutenticado : correoExistente
+VerificandoCorreo --> CuentaPendiente : correoEnviado
+CuentaPendiente --> NoAutenticado : verificarEnlace()
+
+RecuperandoContrasena --> EnviandoEnlace : correoValido
+RecuperandoContrasena --> NoAutenticado : correoInvalido
+EnviandoEnlace --> NoAutenticado : enlaceEnviado
+
+CuentaBloqueada --> NoAutenticado : tiempoExpirado
+CuentaBloqueada --> DesbloqueandoManual : adminInterviene()
+
+SesionActiva --> [*] : cerrarSesion()
+@enduml

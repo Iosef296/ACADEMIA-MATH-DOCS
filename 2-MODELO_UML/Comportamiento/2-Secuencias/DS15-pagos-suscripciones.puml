@@ -1,0 +1,122 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Pagos y Suscripciones (CU-15)
+
+actor "est: Estudiante" as E
+actor "adm: Administrador" as ADM
+participant "pay: PagoService" as PAY
+participant "gateway: PasarelaPago" as GATE
+participant "fact: FacturacionService" as FACT
+participant "sub: SuscripcionService" as SUB
+participant "notif: NotificacionService" as NOT
+participant "db: BaseDeDatos" as DB
+
+== Explorar Planes ==
+E -> PAY : obtenerPlanes()
+activate PAY
+
+PAY -> DB : consultarPlanesActivos()
+activate DB
+DB --> PAY : planesDisponibles
+deactivate DB
+
+PAY --> E : planesComparativa(Basico, Pro, Premium)
+deactivate PAY
+
+== Seleccionar Plan y Pagar ==
+E -> PAY : seleccionarPlan(idPlan, codigoPromocional)
+activate PAY
+
+PAY -> PAY : calcularTotal(idPlan, descuentos)
+
+E -> PAY : seleccionarMetodoPago(metodo)
+
+PAY -> GATE : procesarPago(monto, metodo, tokenSeguro)
+activate GATE
+
+GATE -> GATE : validarTarjeta()
+GATE -> GATE : verificarFondos()
+GATE -> GATE : aplicarAntifraud()
+
+alt Pago aprobado
+    GATE --> PAY : transaccionAprobada, tokenConfirmacion
+    deactivate GATE
+    
+    PAY -> SUB : activarSuscripcion(estudiante, idPlan, token)
+    activate SUB
+    
+    SUB -> DB : guardarSuscripcion(datos)
+    activate DB
+    DB --> SUB : confirmacion
+    deactivate DB
+    
+    SUB --> PAY : suscripcionActiva
+    deactivate SUB
+    
+    PAY -> FACT : generarComprobante(transaccion)
+    activate FACT
+    FACT --> PAY : comprobanteGenerado
+    deactivate FACT
+    
+    PAY -> NOT : enviarConfirmacion(estudiante, detalles)
+    activate NOT
+    NOT --> PAY : correoEnviado
+    deactivate NOT
+    
+    PAY --> E : pagoExitoso(suscripcionActiva, comprobante)
+    
+else Pago rechazado
+    GATE --> PAY : transaccionRechazada, motivo
+    deactivate GATE
+    
+    PAY --> E : pagoFallido(motivo, sugerencias)
+end
+
+deactivate PAY
+
+== Recordatorios de Renovación ==
+loop 7, 3, 1 días antes del vencimiento
+    SUB -> NOT : enviarRecordatorio(estudiante, diasRestantes)
+    activate NOT
+    NOT --> SUB : recordatorioEnviado
+    deactivate NOT
+end
+
+== Cobro Automático de Renovación ==
+alt Renovación automática activada
+    SUB -> GATE : cobroAutomatico(metodoGuardado)
+    activate GATE
+    
+    alt Cobro exitoso
+        GATE --> SUB : cobroAprobado
+        SUB -> DB : extenderSuscripcion(nuevaFecha)
+        activate DB
+        DB --> SUB : confirmacion
+        deactivate DB
+    else Tarjeta vencida
+        GATE --> SUB : cobroFallido, tarjetaVencida
+        SUB -> NOT : notificarActualizarPago(estudiante)
+        activate NOT
+        NOT --> SUB : notificacionEnviada
+        deactivate NOT
+        
+        SUB -> SUB : iniciarPeriodoGracia(3dias)
+    end
+    
+    deactivate GATE
+end
+
+== Panel de Administrador ==
+ADM -> PAY : obtenerReporteIngresos(filtros)
+activate PAY
+
+PAY -> DB : consultarTransacciones(filtros)
+activate DB
+DB --> PAY : datosAgregados
+deactivate DB
+
+PAY --> ADM : reporteIngresos(suscripcionesActivas, cancelaciones, proyecciones)
+deactivate PAY
+
+deactivate E
+deactivate ADM
+@enduml

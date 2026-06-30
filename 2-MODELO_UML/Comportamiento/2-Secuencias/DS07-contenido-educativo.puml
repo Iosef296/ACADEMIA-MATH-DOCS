@@ -1,0 +1,107 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Contenido Educativo (CU-07)
+
+actor "prof: Profesor" as P
+actor "est: Estudiante" as E
+participant "content: ContenidoService" as CONT
+participant "latex: LaTeXRenderService" as TEX
+participant "cache: CacheService" as CACHE
+participant "db: BaseDeDatos" as DB
+
+== Crear Tema ==
+P -> CONT : crearTema(datosTema)
+activate CONT
+
+CONT -> TEX : validarLaTeX(contenido)
+activate TEX
+TEX --> CONT : valido / error
+deactivate TEX
+
+alt Contenido válido
+    CONT -> DB : guardarTema(datosTema)
+    activate DB
+    DB --> CONT : idTema
+    deactivate DB
+    
+    CONT -> CONT : configurarPrerequisitos(tema, prerequisitos)
+    
+    CONT --> P : temaCreado(idTema)
+    
+else Error en contenido
+    CONT --> P : error: "Revise fórmulas LaTeX"
+end
+
+deactivate CONT
+
+== Publicar Tema ==
+P -> CONT : publicarTema(idTema)
+activate CONT
+
+CONT -> DB : actualizarEstado(idTema, PUBLICADO)
+activate DB
+DB --> CONT : confirmacion
+deactivate DB
+
+CONT -> CACHE : invalidarCache(curso)
+activate CACHE
+CACHE --> CONT : cacheInvalidada
+deactivate CACHE
+
+CONT --> P : temaPublicado
+deactivate CONT
+
+== Estudiante Accede a Contenido ==
+E -> CONT : accederTema(idTema)
+activate CONT
+
+CONT -> DB : verificarPrerequisitos(idTema, estudiante)
+activate DB
+DB --> CONT : prerequisitosCumplidos / pendientes
+deactivate DB
+
+alt Prerequisitos cumplidos
+    CONT -> CACHE : obtenerContenidoCache(idTema)
+    activate CACHE
+    CACHE --> CONT : contenido / miss
+    deactivate CACHE
+    
+    opt Cache miss
+        CONT -> DB : obtenerContenido(idTema)
+        activate DB
+        DB --> CONT : contenidoCompleto
+        deactivate DB
+        
+        CONT -> CACHE : guardarCache(idTema, contenido)
+        activate CACHE
+        CACHE --> CONT : guardado
+        deactivate CACHE
+    end
+    
+    CONT --> E : contenidoTema(recursos, videos, descargables)
+    
+else Prerequisitos pendientes
+    CONT --> E : bloqueado: "Complete temas previos: [lista]"
+end
+
+deactivate CONT
+
+== Marcar como Completado ==
+E -> CONT : completarTema(idTema)
+activate CONT
+
+CONT -> DB : registrarProgreso(estudiante, idTema, 100%)
+activate DB
+DB --> CONT : confirmacion
+deactivate DB
+
+CONT -> DB : verificarDesbloqueos(estudiante, curso)
+activate DB
+DB --> CONT : temasDesbloqueados
+deactivate DB
+
+CONT --> E : progresoActualizado, nuevosTemasDisponibles
+deactivate CONT
+
+deactivate P
+deactivate E
+@enduml

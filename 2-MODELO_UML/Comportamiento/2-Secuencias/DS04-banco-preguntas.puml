@@ -1,0 +1,74 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Banco de Preguntas (CU-04)
+
+actor "prof: Profesor" as P
+participant "bank: BancoPreguntasService" as BANK
+participant "ia: IAService" as IA
+participant "render: LaTeXRenderService" as TEX
+participant "db: BaseDeDatos" as DB
+
+activate P
+
+== Crear Nueva Pregunta ==
+P -> BANK : crearPregunta(datos)
+activate BANK
+
+BANK -> TEX : validarLaTeX(enunciado)
+activate TEX
+TEX --> BANK : sintaxisValida / error
+deactivate TEX
+
+alt LaTeX válido
+    BANK -> IA : sugerirClasificacion(enunciado)
+    activate IA
+    IA --> BANK : dificultadSugerida, tagsSugeridos
+    deactivate IA
+    
+    BANK -> DB : guardarPregunta(preguntaCompleta)
+    activate DB
+    DB --> BANK : idPregunta
+    deactivate DB
+    
+    BANK --> P : preguntaCreada(idPregunta)
+    
+else LaTeX inválido
+    BANK --> P : error: "Corrija la sintaxis LaTeX"
+end
+
+deactivate BANK
+
+== Importar desde Excel ==
+P -> BANK : importarPreguntas(archivoExcel)
+activate BANK
+
+BANK -> BANK : validarFormato(archivo)
+BANK -> BANK : procesarFilas()
+
+loop Por cada fila
+    alt Fila válida
+        BANK -> DB : guardarPregunta(datosFila)
+        activate DB
+        DB --> BANK : confirmacion
+        deactivate DB
+    else Fila con error
+        BANK -> BANK : registrarError(fila, motivo)
+    end
+end
+
+BANK --> P : reporteImportacion(exitosos, errores)
+deactivate BANK
+
+== Buscar Preguntas ==
+P -> BANK : buscarPreguntas(filtros)
+activate BANK
+
+BANK -> DB : consultarPreguntas(filtros)
+activate DB
+DB --> BANK : resultados
+deactivate DB
+
+BANK --> P : listaPreguntas
+deactivate BANK
+
+deactivate P
+@enduml

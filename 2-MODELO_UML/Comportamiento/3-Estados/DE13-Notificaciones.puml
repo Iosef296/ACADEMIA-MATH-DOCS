@@ -1,0 +1,33 @@
+@startuml
+title Diagrama de Estado - Gestionar Notificaciones (CU-13)
+
+[*] --> EsperandoEvento
+
+EsperandoEvento --> EvaluandoDestinatario : eventoDisparado()
+EvaluandoDestinatario --> FiltrandoNoMolestar : verificarPreferencias()
+
+FiltrandoNoMolestar --> EncolandoSilencioso : modoNoMolestar + noUrgente
+EncolandoSilencioso --> EsperandoEvento : notificacionEncolada
+
+FiltrandoNoMolestar --> DeterminandoCanal : modoNormal / urgenciaCritica
+
+DeterminandoCanal --> EnviandoPush : canalPush
+DeterminandoCanal --> EnviandoEmail : canalEmail
+DeterminandoCanal --> EnviandoSMS : canalSMS
+DeterminandoCanal --> EnviandoMulticanal : urgenciaCritica
+
+EnviandoPush --> RegistrandoEntrega : pushEnviado
+EnviandoEmail --> RegistrandoEntrega : emailEnviado
+EnviandoSMS --> RegistrandoEntrega : smsEnviado
+EnviandoMulticanal --> RegistrandoEntrega : todosEnviados
+
+RegistrandoEntrega --> AnalizandoEngagement : entregaRegistrada
+AnalizandoEngagement --> EsperandoEvento : metricasActualizadas
+
+EnviandoEmail --> DetectandoRebote : emailFallido
+DetectandoRebote --> MarcandoEmailInvalido : reboteConfirmado
+MarcandoEmailInvalido --> IntentandoCanalAlternativo : canalPush
+IntentandoCanalAlternativo --> RegistrandoEntrega : alternativoEnviado
+
+EsperandoEvento --> [*] : apagarSistema()
+@enduml

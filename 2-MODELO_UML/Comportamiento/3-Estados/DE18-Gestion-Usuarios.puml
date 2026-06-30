@@ -1,0 +1,49 @@
+@startuml
+title Diagrama de Estado - Gestionar Usuarios (CU-18)
+
+[*] --> ListandoUsuarios
+
+ListandoUsuarios --> CreandoUsuario : nuevoUsuario()
+ListandoUsuarios --> EditandoUsuario : seleccionarUsuario()
+ListandoUsuarios --> CargandoMasiva : cargarCSV()
+
+CreandoUsuario --> ValidandoDatos : ingresarDatos()
+ValidandoDatos --> CreandoUsuario : datosInvalidos
+ValidandoDatos --> VerificandoCorreoUnico : datosValidos
+
+VerificandoCorreoUnico --> CreandoUsuario : correoExistente
+VerificandoCorreoUnico --> GenerandoCredenciales : correoDisponible
+
+GenerandoCredenciales --> AsignandoPermisos : contrasenaTemporal
+AsignandoPermisos --> EnviandoBienvenida : permisosAsignados
+EnviandoBienvenida --> ListandoUsuarios : usuarioCreado
+
+EditandoUsuario --> ActualizandoPerfil : guardarCambios()
+ActualizandoPerfil --> Requiriendo2FA : cambioCritico
+Requiriendo2FA --> ActualizandoPerfil : verificacionFallida
+Requiriendo2FA --> PerfilActualizado : verificacionExitosa
+
+EditandoUsuario --> Configurando2FA : activar2FA()
+Configurando2FA --> VerificandoMetodo : seleccionarMetodo()
+VerificandoMetodo --> Configurando2FA : codigoIncorrecto
+VerificandoMetodo --> SeguridadActivada : codigoCorrecto
+
+EditandoUsuario --> VinculandoApoderado : menorDeEdad()
+VinculandoApoderado --> VerificandoDocumento : ingresarDatosApoderado()
+VerificandoDocumento --> VinculandoApoderado : documentoInvalido
+VerificandoDocumento --> ApoderadoVinculado : documentoValido
+
+CargandoMasiva --> ValidandoFormatoCSV : cargarArchivo()
+ValidandoFormatoCSV --> CargandoMasiva : formatoInvalido
+ValidandoMasiva --> ProcesandoFilas : formatoValido
+
+ProcesandoFilas --> GenerandoReporteResultados : procesamientoCompleto
+GenerandoReporteResultados --> ListandoUsuarios : cargaFinalizada
+
+ListandoUsuarios --> DesactivandoCuenta : desactivar()
+DesactivandoCuenta --> VerificandoDependencias : confirmar()
+VerificandoDependencias --> DesactivandoCuenta : dependenciasActivas
+VerificandoDependencias --> CuentaDesactivada : sinDependencias
+
+ListandoUsuarios --> [*] : salir()
+@enduml

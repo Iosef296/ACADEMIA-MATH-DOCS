@@ -1,0 +1,74 @@
+@startuml
+title Diagrama de Secuencia - Administrar Dashboard (CU-01)
+
+actor "adm: Administrador" as ADM
+participant "dash: DashboardService" as DASH
+participant "analytics: AnalyticsService" as ANA
+participant "db: BaseDeDatos" as DB
+participant "audit: AuditoriaService" as AUD
+
+activate ADM
+
+== Cargar Dashboard ==
+ADM -> DASH : cargarDashboard(idAdmin)
+activate DASH
+
+DASH -> ANA : obtenerMetricasTiempoReal()
+activate ANA
+
+ANA -> DB : consultarEstadisticas()
+activate DB
+DB --> ANA : datos: estudiantesActivos, cursosPopulares, ingresos, alertas
+deactivate DB
+
+ANA --> DASH : metricasCompletas
+deactivate ANA
+
+DASH --> ADM : dashboardRenderizado
+deactivate DASH
+
+== Gestionar Cursos ==
+ADM -> DASH : gestionarCurso(idCurso, accion)
+activate DASH
+
+alt Publicar curso
+    DASH -> DB : actualizarEstado(idCurso, PUBLICADO)
+    activate DB
+    DB --> DASH : confirmacion
+    deactivate DB
+    
+else Archivar curso
+    DASH -> DB : actualizarEstado(idCurso, ARCHIVADO)
+    activate DB
+    DB --> DASH : confirmacion
+    deactivate DB
+    
+    DASH -> DASH : verificarEstudiantesActivos(idCurso)
+    note right: Si hay estudiantes, solicitar confirmación
+end
+
+DASH --> ADM : cursoActualizado
+deactivate DASH
+
+== Enviar Comunicados ==
+ADM -> DASH : enviarComunicado(mensaje, filtros)
+activate DASH
+
+DASH -> DB : obtenerDestinatarios(filtros)
+activate DB
+DB --> DASH : listaUsuarios
+deactivate DB
+
+DASH -> DASH : programarEnvio(mensaje, listaUsuarios)
+
+DASH --> ADM : comunicadoProgramado
+deactivate DASH
+
+== Registrar Auditoría ==
+ADM -> AUD : registrarAccion("Dashboard", accion, timestamp)
+activate AUD
+AUD --> ADM : eventoRegistrado
+deactivate AUD
+
+deactivate ADM
+@enduml

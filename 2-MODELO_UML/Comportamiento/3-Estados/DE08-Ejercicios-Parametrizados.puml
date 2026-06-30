@@ -1,0 +1,34 @@
+@startuml
+title Diagrama de Estado - Gestionar Ejercicios Parametrizados (CU-08)
+
+[*] --> DisenandoPlantilla
+
+DisenandoPlantilla --> DefiniendoParametros : ingresarVariables()
+DefiniendoParametros --> ValidandoDependencias : confirmar()
+
+ValidandoDependencias --> DisenandoPlantilla : cicloDetectado
+ValidandoDependencias --> ValidandoDominio : dependenciasOk
+
+ValidandoDominio --> DefiniendoParametros : divisionPorCero
+ValidandoDominio --> GenerandoPreview : dominioValido
+
+GenerandoPreview --> RevisandoVariantes : previewListo
+RevisandoVariantes --> PublicandoPlantilla : aprobar()
+RevisandoVariantes --> DisenandoPlantilla : corregir()
+
+PublicandoPlantilla --> PlantillaActiva : publicada
+
+PlantillaActiva --> GenerandoEjercicio : solicitarEstudiante()
+GenerandoEjercicio --> EjercicioAsignado : varianteUnicaCreada
+
+EjercicioAsignado --> VerificandoRespuesta : enviarRespuesta()
+VerificandoRespuesta --> RespuestaCorrecta : equivalenteSimbolico
+VerificandoRespuesta --> RespuestaIncorrecta : noEquivalente
+
+RespuestaCorrecta --> AdaptandoDificultad : aciertoRegistrado
+RespuestaIncorrecta --> AdaptandoDificultad : falloRegistrado
+
+AdaptandoDificultad --> PlantillaActiva : dificultadAjustada
+
+PlantillaActiva --> [*] : archivar()
+@enduml

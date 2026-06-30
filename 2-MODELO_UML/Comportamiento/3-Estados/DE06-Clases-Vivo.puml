@@ -1,0 +1,36 @@
+@startuml
+title Diagrama de Estado - Gestionar Clases en Vivo (CU-06)
+
+[*] --> ProgramandoClase
+
+ProgramandoClase --> ClaseProgramada : confirmar()
+ProgramandoClase --> [*] : cancelar()
+
+ClaseProgramada --> NotificandoEstudiantes : fechaProxima()
+NotificandoEstudiantes --> ListaEspera : notificacionesEnviadas
+
+ListaEspera --> SalaActiva : profesorInicia()
+ListaEspera --> ClasePospuesta : profesorNoConecta()
+
+SalaActiva --> Transmitiendo : estudiantesUnidos()
+Transmitiendo --> Grabando : iniciarGrabacion()
+
+SalaActiva --> SalaLlena : cupoExcedido()
+SalaLlena --> SalaEspera : encolarEstudiante()
+
+SalaEspera --> SalaActiva : profesorAutoriza()
+
+Transmitiendo --> LanzandoEncuesta : crearEncuesta()
+LanzandoEncuesta --> Transmitiendo : encuestaFinalizada
+
+Transmitiendo --> SalaBreakout : crearGrupos()
+SalaBreakout --> Transmitiendo : gruposFinalizados
+
+Grabando --> ProcesandoGrabacion : finalizarClase()
+ProcesandoGrabacion --> GrabacionDisponible : procesada
+
+ClasePospuesta --> Reprogramando : nuevaFecha()
+Reprogramando --> ClaseProgramada : confirmar()
+
+GrabacionDisponible --> [*] : archivar()
+@enduml

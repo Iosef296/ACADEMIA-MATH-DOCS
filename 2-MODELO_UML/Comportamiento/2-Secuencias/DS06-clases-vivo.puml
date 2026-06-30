@@ -1,0 +1,97 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Clases en Vivo (CU-06)
+
+actor "prof: Profesor" as P
+actor "est: Estudiante" as E
+participant "live: ClasesVivoService" as LIVE
+participant "video: VideoConferenciaService" as VID
+participant "notif: NotificacionService" as NOT
+participant "rec: GrabacionService" as REC
+participant "db: BaseDeDatos" as DB
+
+== Programar Clase ==
+P -> LIVE : programarClase(datosClase)
+activate LIVE
+
+LIVE -> DB : guardarClase(datosClase)
+activate DB
+DB --> LIVE : idClase
+deactivate DB
+
+LIVE -> NOT : notificarEstudiantes(idClase, fecha)
+activate NOT
+NOT --> LIVE : notificacionesEnviadas
+deactivate NOT
+
+LIVE --> P : claseProgramada(idClase)
+deactivate LIVE
+
+== Iniciar Clase ==
+P -> LIVE : iniciarClase(idClase)
+activate LIVE
+
+LIVE -> VID : crearSala(idClase, configuracion)
+activate VID
+VID --> LIVE : salaCreada, enlace
+deactivate VID
+
+LIVE -> DB : registrarInicio(idClase, timestamp)
+activate DB
+DB --> LIVE : confirmacion
+deactivate DB
+
+LIVE --> P : salaLista, enlaceCompartir
+deactivate LIVE
+
+== Estudiante Une a Clase ==
+E -> LIVE : unirseClase(idClase, token)
+activate LIVE
+
+LIVE -> VID : validarAcceso(idClase, token)
+activate VID
+VID --> LIVE : accesoPermitido / denegado
+deactivate VID
+
+alt Acceso permitido
+    LIVE -> DB : registrarAsistencia(idClase, estudiante, timestamp)
+    activate DB
+    DB --> LIVE : confirmacion
+    deactivate DB
+    
+    LIVE --> E : accesoSala(video, chat, pizarra)
+    
+else Sala llena
+    LIVE --> E : salaEspera(posicion, notificacionProfesor)
+end
+
+deactivate LIVE
+
+== Finalizar y Grabar ==
+P -> LIVE : finalizarClase(idClase)
+activate LIVE
+
+LIVE -> VID : cerrarSala(idClase)
+activate VID
+VID --> LIVE : salaCerrada
+deactivate VID
+
+LIVE -> REC : iniciarGrabacion(idClase)
+activate REC
+
+REC -> REC : procesarVideo()
+REC -> REC : generarTranscripcion()
+
+REC --> LIVE : grabacionLista
+deactivate REC
+
+LIVE -> DB : guardarGrabacion(idClase, urlGrabacion)
+activate DB
+DB --> LIVE : confirmacion
+deactivate DB
+
+LIVE --> P : claseFinalizada, grabacionDisponible
+deactivate LIVE
+
+deactivate P
+deactivate E
+@enduml

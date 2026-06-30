@@ -1,0 +1,38 @@
+@startuml
+title Diagrama de Estado - Gestionar PDF y OCR (CU-14)
+
+[*] --> SeleccionandoArchivo
+
+SeleccionandoArchivo --> ValidandoArchivo : cargarPDF()
+ValidandoArchivo --> SeleccionandoArchivo : archivoInvalido
+ValidandoArchivo --> EncolandoProcesamiento : archivoValido
+
+EncolandoProcesamiento --> ProcesandoOCR : turnoAlcanzado()
+ProcesandoOCR --> ExtrayendoTexto : ocrIniciado()
+
+ExtrayendoTexto --> IdentificandoFormulas : textoExtraido
+IdentificandoFormulas --> ConvirtiendoLaTeX : formulasDetectadas
+
+ConvirtiendoLaTeX --> MarcandoRevisionManual : formulaCompleja
+ConvirtiendoLaTeX --> GenerandoPreview : conversionCompleta
+
+MarcandoRevisionManual --> GenerandoPreview : marcado
+
+GenerandoPreview --> NotificandoProfesor : previewListo
+NotificandoProfesor --> EsperandoRevision : notificacionEnviada
+
+EsperandoRevision --> EditandoCorrecciones : profesorRevisa()
+EditandoCorrecciones --> AplicandoCorrecciones : confirmar()
+AplicandoCorrecciones --> EsperandoRevision : guardado
+
+EsperandoRevision --> SeleccionandoDestino : aprobarPublicacion()
+SeleccionandoDestino --> PublicandoTemaNuevo : destinoNuevo
+SeleccionandoDestino --> AgregandoSeccion : destinoExistente
+SeleccionandoDestino --> GuardandoBorrador : destinoBorrador
+
+PublicandoTemaNuevo --> NotificandoEstudiantes : temaCreado
+AgregandoSeccion --> NotificandoEstudiantes : seccionAgregada
+GuardandoBorrador --> [*] : borradorGuardado
+
+NotificandoEstudiantes --> [*] : completado
+@enduml

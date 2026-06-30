@@ -1,0 +1,115 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Notificaciones (CU-13)
+
+actor "est: Estudiante" as E
+actor "prof: Profesor" as P
+actor "adm: Administrador" as ADM
+participant "notif: NotificacionService" as NOT
+participant "prog: ProgramadorTareas" as PROG
+participant "push: PushService" as PUSH
+participant "email: EmailService" as MAIL
+participant "sms: SMSService" as SMS
+participant "db: BaseDeDatos" as DB
+
+== Evento Disparador ==
+ADM -> NOT : enviarComunicadoMasivo(mensaje, segmento)
+activate NOT
+
+NOT -> DB : obtenerDestinatarios(segmento)
+activate DB
+DB --> NOT : listaUsuarios
+deactivate DB
+
+loop Por cada usuario
+    NOT -> NOT : evaluarPreferencias(usuario, tipoEvento)
+    
+    alt Usuario en modo No Molestar
+        NOT -> NOT : encolarNotificacion(usuario, mensaje)
+    else Urgencia crítica
+        NOT -> NOT : ignorarNoMolestar()
+        NOT -> PUSH : enviarPush(usuario, mensaje)
+        activate PUSH
+        PUSH --> NOT : pushEnviado
+        deactivate PUSH
+    else Canal preferido: Email
+        NOT -> MAIL : enviarEmail(usuario, mensaje)
+        activate MAIL
+        MAIL --> NOT : emailEnviado
+        deactivate MAIL
+    else Canal preferido: Push
+        NOT -> PUSH : enviarPush(usuario, mensaje)
+        activate PUSH
+        PUSH --> NOT : pushEnviado
+        deactivate PUSH
+    else Canal preferido: SMS
+        NOT -> SMS : enviarSMS(usuario, mensaje)
+        activate SMS
+        SMS --> NOT : smsEnviado
+        deactivate SMS
+    end
+    
+    NOT -> DB : registrarEntrega(usuario, mensaje, canal, estado)
+    activate DB
+    DB --> NOT : confirmacion
+    deactivate DB
+end
+
+NOT --> ADM : comunicadoEnviado(estadisticas)
+deactivate NOT
+
+== Recordatorio Inteligente de Estudio ==
+PROG -> NOT : generarRecordatorio(estudiante)
+activate NOT
+
+NOT -> PROG : calcularHorarioOptimo(estudiante)
+activate PROG
+
+PROG -> DB : obtenerPatronesHistoricos(estudiante)
+activate DB
+DB --> PROG : patronesProductividad
+deactivate DB
+
+PROG -> PROG : analizarHorariosMayorActividad()
+PROG -> PROG : evitarHorariosNoMolestar()
+
+PROG --> NOT : horarioOptimo
+deactivate PROG
+
+NOT -> PUSH : enviarPush(estudiante, "Recordatorio de estudio", horarioOptimo)
+activate PUSH
+PUSH --> NOT : pushEnviado
+deactivate PUSH
+
+NOT --> E : recordatorioEnviado
+deactivate NOT
+
+== Manejo de Fallos ==
+alt Email rebota
+    MAIL -> NOT : notificarRebote(email, codigoError)
+    activate NOT
+    
+    NOT -> DB : marcarEmailInvalido(usuario)
+    activate DB
+    DB --> NOT : confirmacion
+    deactivate DB
+    
+    NOT -> PUSH : intentarCanalAlternativo(usuario, mensaje)
+    activate PUSH
+    PUSH --> NOT : pushEnviado
+    deactivate PUSH
+    
+    deactivate NOT
+else Dispositivo sin conexión
+    PUSH -> NOT : notificarFalloEntrega(usuario, mensaje)
+    activate NOT
+    
+    NOT -> NOT : encolarReintento(usuario, mensaje, reintento: 1)
+    NOT -> NOT : programarReintento(10min)
+    
+    deactivate NOT
+end
+
+deactivate E
+deactivate P
+deactivate ADM
+@enduml

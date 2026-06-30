@@ -1,0 +1,109 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Gamificación (CU-10)
+
+actor "est: Estudiante" as E
+participant "gam: GamificacionService" as GAM
+participant "punt: PuntuacionService" as PUNT
+participant "logros: LogrosService" as LOG
+participant "tienda: TiendaService" as TIE
+participant "notif: NotificacionService" as NOT
+participant "db: BaseDeDatos" as DB
+
+== Registrar Actividad ==
+E -> GAM : registrarActividad(tipoActividad, datos)
+activate GAM
+
+GAM -> PUNT : calcularXP(tipoActividad, datos)
+activate PUNT
+
+PUNT -> PUNT : calcularBase(tipoActividad)
+PUNT -> PUNT : calcularBonusRacha(estudiante)
+PUNT -> PUNT : calcularBonusDificultad(datos)
+PUNT -> PUNT : calcularBonusTiempo(datos)
+
+PUNT --> GAM : xpTotalGanado
+deactivate PUNT
+
+GAM -> DB : guardarXP(estudiante, xpTotalGanado)
+activate DB
+DB --> GAM : confirmacion
+deactivate DB
+
+GAM --> E : xpGanado, progresoNivel
+deactivate GAM
+
+== Verificar Logros ==
+GAM -> LOG : verificarLogros(estudiante)
+activate LOG
+
+LOG -> DB : consultarProgresoLogros(estudiante)
+activate DB
+DB --> LOG : progresoActual
+deactivate DB
+
+loop Por cada logro posible
+    alt Logro desbloqueado
+        LOG -> DB : desbloquearLogro(estudiante, idLogro)
+        activate DB
+        DB --> LOG : confirmacion
+        deactivate DB
+        
+        LOG -> NOT : notificarLogro(estudiante, idLogro)
+        activate NOT
+        NOT --> LOG : notificacionEnviada
+        deactivate NOT
+        
+        LOG -> LOG : verificarLogrosSecretos(estudiante)
+    end
+end
+
+LOG --> GAM : logrosActualizados
+deactivate LOG
+
+== Subir de Nivel ==
+alt XP alcanza umbral
+    GAM -> GAM : calcularNuevoNivel(estudiante)
+    
+    GAM -> NOT : notificarSubidaNivel(estudiante, nuevoNivel)
+    activate NOT
+    NOT --> GAM : notificacionEnviada
+    deactivate NOT
+    
+    GAM -> DB : actualizarNivel(estudiante, nuevoNivel)
+    activate DB
+    DB --> GAM : confirmacion
+    deactivate DB
+    
+    GAM --> E : subidaNivel(nuevoNivel, recompensasDesbloqueadas)
+end
+
+== Canjear Recompensa ==
+E -> TIE : canjearRecompensa(idRecompensa)
+activate TIE
+
+TIE -> DB : verificarPuntos(estudiante, idRecompensa)
+activate DB
+DB --> TIE : puntosSuficientes / insuficientes
+deactivate DB
+
+alt Puntos suficientes
+    TIE -> DB : descontarPuntos(estudiante, costo)
+    activate DB
+    DB --> TIE : confirmacion
+    deactivate DB
+    
+    TIE -> DB : activarRecompensa(estudiante, idRecompensa)
+    activate DB
+    DB --> TIE : confirmacion
+    deactivate DB
+    
+    TIE --> E : recompensaCanjeada, activa
+    
+else Puntos insuficientes
+    TIE --> E : error: "Puntos insuficientes. Actividades sugeridas: [lista]"
+end
+
+deactivate TIE
+
+deactivate E
+@enduml

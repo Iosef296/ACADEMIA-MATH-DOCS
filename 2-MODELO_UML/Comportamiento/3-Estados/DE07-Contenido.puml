@@ -1,0 +1,27 @@
+@startuml
+title Diagrama de Estado - Gestionar Contenido Educativo (CU-07)
+
+[*] --> ExplorandoCurso
+
+ExplorandoCurso --> CreandoTema : nuevoTema()
+ExplorandoCurso --> EditandoTema : seleccionarTema()
+ExplorandoCurso --> PublicandoTema : publicar()
+
+CreandoTema --> ValidandoLaTeX : ingresarContenido()
+ValidandoLaTeX --> CreandoTema : errorSintaxis
+ValidandoTema --> ConfigurandoPrerequisitos : contenidoValido
+
+ConfigurandoPrerequisitos --> GuardandoBorrador : guardar()
+GuardandoBorrador --> ExplorandoCurso : borradorGuardado
+
+EditandoTema --> VersionandoTema : guardarNuevaVersion()
+VersionandoTema --> ExplorandoCurso : versionCreada
+
+PublicandoTema --> DesbloqueandoEstudiantes : cumplenPrerequisitos()
+DesbloqueandoEstudiantes --> TemaPublicado : desbloqueado
+
+TemaPublicado --> AccediendoOffline : descargarMovil()
+AccediendoOffline --> Sincronizando : reconectarInternet()
+
+ExplorandoCurso --> [*] : salir()
+@enduml

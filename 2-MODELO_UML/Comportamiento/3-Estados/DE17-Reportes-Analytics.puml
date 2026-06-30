@@ -1,0 +1,41 @@
+@startuml
+title Diagrama de Estado - Gestionar Reportes y Analytics (CU-17)
+
+[*] --> CargandoDashboardKPIs
+
+CargandoDashboardKPIs --> AplicandoFiltros : filtrar()
+AplicandoFiltros --> ProcesandoConsulta : filtrosAplicados
+ProcesandoConsulta --> GenerandoVisualizacion : datosObtenidos
+
+GenerandoVisualizacion --> MostrandoTabla : tipoTabla
+GenerandoVisualizacion --> MostrandoGraficoLineas : tipoLineas
+GenerandoVisualizacion --> MostrandoGraficoBarras : tipoBarras
+GenerandoVisualizacion --> MostrandoHeatmap : tipoHeatmap
+
+MostrandoTabla --> ExportandoReporte : exportar()
+MostrandoGraficoLineas --> ExportandoReporte : exportar()
+MostrandoGraficoBarras --> ExportandoReporte : exportar()
+MostrandoHeatmap --> ExportandoReporte : exportar()
+
+ExportandoReporte --> GenerandoPDF : formatoPDF
+ExportandoReporte --> GenerandoExcel : formatoExcel
+ExportandoReporte --> GenerandoCSV : formatoCSV
+
+GenerandoPDF --> ReporteDescargable : pdfListo
+GenerandoExcel --> ReporteDescargable : excelListo
+GenerandoCSV --> ReporteDescargable : csvListo
+
+ReporteDescargable --> CargandoDashboardKPIs : volver()
+
+CargandoDashboardKPIs --> DetectandoRiesgoDesercion : analisisAutomatico()
+DetectandoRiesgoDesercion --> AlertandoIntervencion : riesgoDetectado
+AlertandoIntervencion --> CargandoDashboardKPIs : alertaEnviada
+
+CargandoDashboardKPIs --> ProgramandoReporteAutomatico : programar()
+ProgramandoReporteAutomatico --> ReporteProgramado : configuracionGuardada
+ReporteProgramado --> EjecutandoReporteProgramado : fechaAlcanzada
+EjecutandoReporteProgramado --> EnviandoPorEmail : reporteGenerado
+EnviandoPorEmail --> ReporteProgramado : emailEnviado
+
+CargandoDashboardKPIs --> [*] : salir()
+@enduml

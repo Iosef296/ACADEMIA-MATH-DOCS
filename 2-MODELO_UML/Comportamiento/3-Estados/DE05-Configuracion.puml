@@ -1,0 +1,31 @@
+@startuml
+title Diagrama de Estado - Configurar Sistema (CU-05)
+
+[*] --> MenuConfiguracion
+
+MenuConfiguracion --> ConfigurandoMarca : seleccionarMarca()
+MenuConfiguracion --> GestionandoModulos : seleccionarModulos()
+MenuConfiguracion --> ConfigurandoIntegraciones : seleccionarIntegraciones()
+MenuConfiguracion --> ProgramandoBackups : seleccionarBackups()
+MenuConfiguracion --> ConfigurandoGamificacion : seleccionarGamificacion()
+
+ConfigurandoMarca --> MenuConfiguracion : guardar()
+GestionandoModulos --> VerificandoDependencias : desactivarModulo()
+
+VerificandoDependencias --> GestionandoModulos : requiereConfirmacion
+VerificandoDependencias --> ModuloDesactivado : confirmar()
+
+ModuloDesactivado --> GestionandoModulos : completado
+
+ConfigurandoIntegraciones --> ValidandoAPI : ingresarCredenciales()
+ValidandoAPI --> ConfigurandoIntegraciones : credencialesInvalidas
+ValidandoAPI --> IntegracionActiva : credencialesValidas
+
+ProgramandoBackups --> BackupProgramado : guardar()
+BackupProgramado --> EjecutandoBackup : horarioAlcanzado()
+EjecutandoBackup --> BackupProgramado : completado
+
+ConfigurandoGamificacion --> MenuConfiguracion : guardar()
+
+MenuConfiguracion --> [*] : salir()
+@enduml

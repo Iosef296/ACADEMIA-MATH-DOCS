@@ -1,0 +1,64 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Auditoría y Logs (CU-02)
+
+actor "adm: Administrador" as ADM
+participant "audit: AuditoriaService" as AUD
+participant "db: BaseDeDatos" as DB
+participant "alert: AlertaService" as ALERT
+participant "export: ExportService" as EXP
+
+activate ADM
+
+== Consultar Logs ==
+ADM -> AUD : consultarLogs(filtros)
+activate AUD
+
+AUD -> DB : ejecutarConsulta(filtros)
+activate DB
+DB --> AUD : resultadosPaginados
+deactivate DB
+
+AUD --> ADM : logsFiltrados
+deactivate AUD
+
+== Exportar Logs ==
+ADM -> EXP : exportarLogs(formato, filtros)
+activate EXP
+
+EXP -> AUD : obtenerDatosCrudos(filtros)
+activate AUD
+AUD --> EXP : datosCompletos
+deactivate AUD
+
+EXP -> EXP : generarArchivo(formato)
+
+EXP --> ADM : archivoDescargable
+deactivate EXP
+
+== Configurar Alertas ==
+ADM -> ALERT : configurarAlerta(tipo, umbral)
+activate ALERT
+
+ALERT -> DB : guardarConfiguracion(alerta)
+activate DB
+DB --> ALERT : confirmacion
+deactivate DB
+
+ALERT --> ADM : alertaActiva
+deactivate ALERT
+
+== Detección Automática ==
+loop Monitoreo continuo
+    AUD -> AUD : detectarPatronesAnomalos()
+    
+    alt Intrusión detectada
+        AUD -> ALERT : generarAlertaCritica(IP, tipo)
+        activate ALERT
+        ALERT -> ALERT : bloquearIP(IP)
+        ALERT --> AUD : alertaEnviada
+        deactivate ALERT
+    end
+end
+
+deactivate ADM
+@enduml

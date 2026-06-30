@@ -1,0 +1,37 @@
+@startuml
+title Diagrama de Estado - Gestionar Exámenes (CU-09)
+
+[*] --> ConfigurandoExamen
+
+ConfigurandoExamen --> SeleccionandoPreguntas : confirmarConfig()
+SeleccionandoPreguntas --> MezclandoVariantes : preguntasSeleccionadas
+MezclandoVariantes --> ExamenArmado : mezclaCompleta
+
+ExamenArmado --> ProgramandoFechas : programar()
+ProgramandoFechas --> ExamenProgramado : fechasConfirmadas
+
+ExamenProgramado --> DisponibleParaInicio : ventanaAbierta()
+DisponibleParaInicio --> SesionActiva : estudianteInicia()
+
+SesionActiva --> RespondiendoPregunta : navegar()
+RespondiendoPregunta --> GuardandoParcial : autoGuardar()
+
+SesionActiva --> TiempoAgotado : cronometroCero()
+SesionActivo --> EnviandoManual : estudianteFinaliza()
+
+TiempoAgotado --> CerrandoExamen : forzarCierre()
+EnviandoManual --> CerrandoExamen : confirmar()
+
+CerrandoExamen --> CalificandoAutomatico : cerrado
+CalificandoAutomatico --> PendienteRevisionManual : preguntasAbiertas
+CalificandoAutomatico --> ResultadoDisponible : soloCerradas
+
+PendienteRevisionManual --> ResultadoDisponible : profesorRevisa()
+ResultadoDisponible --> GenerandoCertificado : aprobado
+ResultadoDisponible --> MostrandoRetroalimentacion : noAprobado
+
+GenerandoCertificado --> ExamenCompletado : certificadoListo
+MostrandoRetroalimentacion --> ExamenCompletado : retroalimentacionMostrada
+
+ExamenCompletado --> [*] : archivar()
+@enduml

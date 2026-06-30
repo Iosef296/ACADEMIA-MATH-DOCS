@@ -1,0 +1,108 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Ejercicios Parametrizados (CU-08)
+
+actor "prof: Profesor" as P
+actor "est: Estudiante" as E
+participant "ejp: EjerciciosParametrizadosService" as EJP
+participant "motor: MotorParametrizacion" as MOT
+participant "verif: VerificadorSimbolico" as VER
+participant "adapt: AdaptacionDificultad" as ADAPT
+participant "db: BaseDeDatos" as DB
+
+== Crear Plantilla ==
+P -> EJP : crearPlantilla(enunciado, parametros)
+activate EJP
+
+EJP -> MOT : validarParametros(parametros)
+activate MOT
+
+loop Validar dependencias
+    MOT -> MOT : verificarCiclos(parametros)
+    MOT -> MOT : verificarDominio(parametros)
+end
+
+MOT --> EJP : parametrosValidos / errores
+deactivate MOT
+
+alt Parámetros válidos
+    EJP -> MOT : generarVariantes(plantilla, 5)
+    activate MOT
+    MOT --> EJP : variantesPreview
+    deactivate MOT
+    
+    P -> EJP : confirmarPlantilla()
+    
+    EJP -> DB : guardarPlantilla(plantillaCompleta)
+    activate DB
+    DB --> EJP : idPlantilla
+    deactivate DB
+    
+    EJP --> P : plantillaPublicada(idPlantilla)
+    
+else Parámetros inválidos
+    EJP --> P : error: "Corrija dependencias o dominio"
+end
+
+deactivate EJP
+
+== Generar Ejercicio para Estudiante ==
+E -> EJP : solicitarEjercicio(idPlantilla)
+activate EJP
+
+EJP -> MOT : generarVarianteUnica(idPlantilla, estudiante)
+activate MOT
+
+MOT -> MOT : aplicarRestricciones()
+MOT -> MOT : verificarIndeterminaciones()
+
+MOT --> EJP : varianteUnica(valores, enunciadoRenderizado)
+deactivate MOT
+
+EJP -> DB : guardarIntento(estudiante, idPlantilla, variante)
+activate DB
+DB --> EJP : confirmacion
+deactivate DB
+
+EJP --> E : ejercicioPersonalizado(enunciado, pistasDisponibles)
+deactivate EJP
+
+== Verificar Respuesta ==
+E -> EJP : enviarRespuesta(respuesta)
+activate EJP
+
+EJP -> VER : verificarSimbolicamente(respuesta, solucion)
+activate VER
+
+VER -> VER : compararExpresionesAlgebraicas()
+VER -> VER : evaluarFormasEquivalentes()
+
+VER --> EJP : respuestaCorrecta / incorrecta / equivalente
+deactivate VER
+
+alt Respuesta correcta o equivalente
+    EJP -> ADAPT : ajustarDificultad(estudiante, acierto)
+    activate ADAPT
+    ADAPT --> EJP : nuevaDificultad
+    deactivate ADAPT
+    
+    EJP -> DB : guardarResultado(estudiante, acierto, tiempo)
+    activate DB
+    DB --> EJP : confirmacion
+    deactivate DB
+    
+    EJP --> E : resultadoCorrecto, siguienteEjercicioSugerido
+    
+else Respuesta incorrecta
+    EJP -> ADAPT : ajustarDificultad(estudiante, fallo)
+    activate ADAPT
+    ADAPT --> EJP : nuevaDificultad
+    deactivate ADAPT
+    
+    EJP --> E : resultadoIncorrecto, pistaSugerida
+end
+
+deactivate EJP
+
+deactivate P
+deactivate E
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+title Diagrama de Estado - Administrar Dashboard (CU-01)
+
+[*] --> SesionInactiva
+
+SesionInactiva --> Autenticando : iniciarSesion()
+Autenticando --> DashboardActivo : credencialesValidas
+Autenticando --> SesionInactiva : credencialesInvalidas
+
+DashboardActivo --> GestionandoCursos : seleccionarGestionCursos()
+DashboardActivo --> EnviandoComunicados : seleccionarComunicados()
+DashboardActivo --> ConfigurandoSEO : seleccionarSEO()
+DashboardActivo --> VisualizandoFinanzas : seleccionarIngresos()
+DashboardActivo --> SesionInactiva : cerrarSesion() / sesionExpirada
+
+GestionandoCursos --> PublicandoCurso : publicarNuevo()
+GestionandoCursos --> ArchivandoCurso : archivar()
+GestionandoCursos --> DespublicandoCurso : despublicar()
+GestionandoCursos --> DashboardActivo : volver()
+
+PublicandoCurso --> GestionandoCursos : confirmar()
+ArchivandoCurso --> GestionandoCursos : confirmar()
+DespublicandoCurso --> GestionandoCursos : confirmar()
+
+EnviandoComunicados --> ProgramandoEnvio : programar()
+EnviandoComunicados --> DashboardActivo : cancelar()
+ProgramandoEnvio --> EnviandoComunicados : confirmar()
+
+ConfigurandoSEO --> DashboardActivo : guardar()
+VisualizandoFinanzas --> DashboardActivo : volver()
+
+DashboardActivo --> [*] : cerrarSesion()
+@enduml

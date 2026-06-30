@@ -1,0 +1,28 @@
+@startuml
+title Diagrama de Estado - Gestionar IA y Recomendaciones (CU-11)
+
+[*] --> EvaluandoDatos
+
+EvaluandoDatos --> DatosInsuficientes : historial < 5 ejercicios
+DatosInsuficientes --> RecomendandoGenericos : ejerciciosIntermedios
+RecomendandoGenericos --> EvaluandoDatos : nuevoEjercicioCompletado
+
+EvaluandoDatos --> AnalizandoErrores : historialSuficiente
+AnalizandoErrores --> IdentificandoDebilidades : tasaError > 40%
+
+IdentificandoDebilidades --> GenerandoEjerciciosFocalizados : areasDetectadas
+GenerandoEjerciciosFocalizados --> RecomendandoPersonalizado : ejerciciosListos
+
+RecomendandoPersonalizado --> EvaluandoRespuestaIA : estudianteInteractua()
+
+EvaluandoRespuestaIA --> RespondiendoDirecto : confianzaAlta
+EvaluandoRespuestaIA --> EscalandoProfesor : confianzaBaja / ambiguo
+
+EscalandoProfesor --> EsperandoProfesor : notificacionEnviada
+EsperandoProfesor --> RecomendandoPersonalizado : profesorResponde
+
+RespondiendoDirecto --> AprendiendoFeedback : estudianteCalifica()
+AprendiendoFeedback --> EvaluandoDatos : feedbackProcesado
+
+EvaluandoDatos --> [*] : desactivarIA()
+@enduml

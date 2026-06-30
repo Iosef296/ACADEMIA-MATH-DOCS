@@ -1,0 +1,131 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Reportes y Analytics (CU-17)
+
+actor "prof: Profesor" as P
+actor "adm: Administrador" as ADM
+participant "rep: ReporteService" as REP
+participant "analytics: AnalyticsService" as ANA
+participant "alert: AlertaInteligente" as ALERT
+participant "export: ExportService" as EXP
+participant "db: BaseDeDatos" as DB
+
+== Cargar Dashboard General ==
+ADM -> REP : obtenerDashboardGeneral()
+activate REP
+
+REP -> ANA : calcularKPIs(periodo)
+activate ANA
+
+ANA -> DB : consultarDatosAgregados(periodo)
+activate DB
+DB --> ANA : estudiantesActivos, ejerciciosResueltos, tasaAprobacion
+deactivate DB
+
+ANA -> ANA : calcularTendencias()
+ANA -> ANA : compararPeriodos()
+
+ANA --> REP : KPIsCompletos
+deactivate ANA
+
+REP --> ADM : dashboardKPIs(graficos, metricas, tendencias)
+deactivate REP
+
+== Aplicar Filtros y Generar Reporte ==
+P -> REP : generarReporte(filtros, visualizacion)
+activate REP
+
+REP -> ANA : procesarConsulta(filtros)
+activate ANA
+
+ANA -> DB : ejecutarQueryOptimizado(filtros)
+activate DB
+DB --> ANA : resultados
+deactivate DB
+
+ANA -> ANA : aplicarVisualizacion(tipo: tabla, lineas, barras, heatmap)
+
+ANA --> REP : datosVisualizados
+deactivate ANA
+
+REP --> P : reporteGenerado(tabla, graficos, datosCrudos)
+deactivate REP
+
+== Detectar Estudiantes en Riesgo ==
+loop Análisis automático diario
+    ALERT -> ANA : identificarRiesgoDesercion()
+    activate ANA
+    
+    ANA -> DB : consultarPatronesRiesgo()
+    activate DB
+    DB --> ANA : datosEstudiantes
+    deactivate DB
+    
+    ANA -> ANA : aplicarModeloPredictivo()
+    
+    alt Estudiante en riesgo detectado
+        ANA --> ALERT : alertaRiesgo(estudiante, nivelRiesgo, motivos)
+        
+        ALERT -> NOTIF : notificarProfesor(profesorAsignado, alerta)
+        activate NOTIF
+        NOTIF --> ALERT : notificacionEnviada
+        deactivate NOTIF
+        
+        ALERT -> NOTIF : notificarEstudiante(estudiante, recursosAyuda)
+        activate NOTIF
+        NOTIF --> ALERT : notificacionEnviada
+        deactivate NOTIF
+    end
+    
+    deactivate ANA
+end
+
+== Exportar Reporte ==
+P -> EXP : exportarReporte(formato: PDF/Excel/CSV)
+activate EXP
+
+EXP -> REP : obtenerDatosReporte(idReporte)
+activate REP
+REP --> EXP : datosCompletos
+deactivate REP
+
+EXP -> EXP : generarArchivo(formato)
+EXP -> EXP : incluirGraficos(formato)
+
+alt Formato PDF
+    EXP -> EXP : renderizarGraficosPDF()
+else Formato Excel
+    EXP -> EXP : crearTablasDinamicas()
+else Formato CSV
+    EXP -> EXP : anonimizarDatos()
+end
+
+EXP --> P : archivoDescargable(url)
+deactivate EXP
+
+== Programar Reportes Automáticos ==
+ADM -> REP : programarReporteAutomatico(configuracion)
+activate REP
+
+REP -> DB : guardarProgramacion(configuracion)
+activate DB
+DB --> REP : confirmacion
+deactivate DB
+
+loop Ejecución programada (semanal/mensual/trimestral)
+    REP -> ANA : generarReporteProgramado(configuracion)
+    activate ANA
+    ANA --> REP : reporteGenerado
+    deactivate ANA
+    
+    REP -> NOTIF : enviarReporteEmail(destinatarios, reporte)
+    activate NOTIF
+    NOTIF --> REP : correoEnviado
+    deactivate NOTIF
+end
+
+REP --> ADM : reporteProgramado(confirmacion, proximaEjecucion)
+deactivate REP
+
+deactivate P
+deactivate ADM
+@enduml

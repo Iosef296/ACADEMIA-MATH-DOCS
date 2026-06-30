@@ -1,0 +1,36 @@
+@startuml
+title Diagrama de Estado - Gestionar Foro e Interacción (CU-12)
+
+[*] --> NavegandoForo
+
+NavegandoForo --> CreandoPublicacion : nuevaPublicacion()
+NavegandoForo --> FiltrandoPublicaciones : aplicarFiltros()
+NavegandoForo --> ViendoPublicacion : seleccionarPublicacion()
+
+CreandoPublicacion --> ValidandoContenido : enviar()
+ValidandoContenido --> CreandoPublicacion : contenidoInvalido
+ValidandoContenido --> Publicando : contenidoValido
+
+Publicando --> NotificandoSeguidores : publicacionCreada
+NotificandoSeguidores --> NavegandoForo : notificacionesEnviadas
+
+ViendoPublicacion --> Respondiendo : responder()
+Respondiendo --> ValidandoRespuesta : enviar()
+ValidandoRespuesta --> ViendoPublicacion : respuestaInvalida
+ValidandoRespuesta --> PublicandoRespuesta : respuestaValida
+
+PublicandoRespuesta --> NotificandoAutor : respuestaPublicada
+NotificandoAutor --> ViendoPublicacion : notificacionEnviada
+
+ViendoPublicacion --> VotandoRespuesta : votar()
+VotandoRespuesta --> ActualizandoReputacion : votoRegistrado
+ActualizandoReputacion --> ViendoPublicacion : reputacionActualizada
+
+ViendoPublicacion --> MarcandoCorrecta : marcarSolucion()
+MarcandoCorrecta --> OtorgandoReputacion : respuestaMarcada
+OtorgandoReputacion --> PublicacionResuelta : reputacionOtorgada
+
+PublicacionResuelta --> NavegandoForo : volver()
+
+NavegandoForo --> [*] : salir()
+@enduml

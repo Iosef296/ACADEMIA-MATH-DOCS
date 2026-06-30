@@ -1,0 +1,124 @@
+@startuml
+title Diagrama de Secuencia - Gestionar Progreso y Rutinas (CU-16)
+
+actor "est: Estudiante" as E
+actor "apod: Apoderado" as APO
+participant "prog: ProgresoService" as PROG
+participant "plan: PlanificacionService" as PLAN
+participant "ritmo: AnalizadorRitmo" as RIT
+participant "gam: GamificacionService" as GAM
+participant "notif: NotificacionService" as NOT
+participant "db: BaseDeDatos" as DB
+
+== Visualizar Dashboard de Progreso ==
+E -> PROG : obtenerProgreso()
+activate PROG
+
+PROG -> DB : consultarAvance(estudiante)
+activate DB
+DB --> PROG : avancePorCurso, temasCompletados, tiempoTotal
+deactivate DB
+
+PROG -> PROG : calcularRachaDias()
+PROG -> PROG : generarGraficosHistoricos()
+
+PROG --> E : dashboardProgreso(porcentajes, racha, graficos)
+deactivate PROG
+
+== Definir Metas ==
+E -> PROG : definirMetas(horasSemanales, temasObjetivo, fechaExamen)
+activate PROG
+
+PROG -> PLAN : generarPlanSemanal(estudiante, metas)
+activate PLAN
+
+PLAN -> RIT : analizarVelocidadHistorica(estudiante)
+activate RIT
+
+RIT -> DB : obtenerTiemposAprendizaje(estudiante)
+activate DB
+DB --> RIT : datosHistoricos
+deactivate DB
+
+RIT -> RIT : calcularVelocidadPromedio()
+RIT -> RIT : ajustarDistribucionTemas()
+
+RIT --> PLAN : velocidadAjustada, distribucionRecomendada
+deactivate RIT
+
+PLAN -> PLAN : distribuirTemasEquitativamente()
+PLAN -> PLAN : programarDescansos()
+PLAN -> PLAN : incluirSesionesRepaso()
+
+PLAN --> PROG : planSemanalPersonalizado
+deactivate PLAN
+
+PROG -> DB : guardarPlan(estudiante, plan)
+activate DB
+DB --> PROG : confirmacion
+deactivate DB
+
+PROG --> E : planGenerado(semanas, horarioDiario, metas)
+deactivate PROG
+
+== Registrar Actividad Diaria ==
+E -> PROG : registrarActividad(tema, tiempo, estadoAnimo)
+activate PROG
+
+PROG -> DB : guardarActividad(estudiante, tema, tiempo, animo)
+activate DB
+DB --> PROG : confirmacion
+deactivate DB
+
+PROG -> PROG : actualizarPorcentajeCurso()
+PROG -> PROG : verificarDesbloqueos()
+
+alt Estudiante va atrasado
+    PROG -> PLAN : solicitarReajuste(estudiante)
+    activate PLAN
+    PLAN --> PROG : planReajustado
+    deactivate PLAN
+    
+    PROG -> NOT : notificarReajuste(estudiante, cambios)
+    activate NOT
+    NOT --> PROG : notificacionEnviada
+    deactivate NOT
+end
+
+alt Estado de ánimo negativo 3 días consecutivos
+    PROG -> NOT : alertarProfesor(estudiante, patronAnimo)
+    activate NOT
+    NOT --> PROG : alertaEnviada
+    deactivate NOT
+end
+
+PROG -> GAM : sincronizarProgreso(estudiante, XPganado)
+activate GAM
+GAM --> PROG : sincronizacionExitosa
+deactivate GAM
+
+PROG --> E : progresoActualizado, siguienteActividadSugerida
+deactivate PROG
+
+== Compartir con Apoderado ==
+E -> PROG : autorizarCompartirApoderado(correoApoderado)
+activate PROG
+
+PROG -> DB : vincularApoderado(estudiante, correoApoderado)
+activate DB
+DB --> PROG : confirmacion
+deactivate DB
+
+loop Resumen semanal automático
+    PROG -> NOT : enviarResumenApoderado(correoApoderado, resumen)
+    activate NOT
+    NOT --> PROG : correoEnviado
+    deactivate NOT
+end
+
+PROG --> E : apoderadoVinculado
+deactivate PROG
+
+deactivate E
+deactivate APO
+@enduml

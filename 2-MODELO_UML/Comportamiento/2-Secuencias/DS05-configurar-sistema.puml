@@ -1,0 +1,84 @@
+@startuml
+title Diagrama de Secuencia - Configurar Sistema (CU-05)
+
+actor "adm: Administrador" as ADM
+participant "config: ConfiguracionService" as CFG
+participant "api: APIService" as API
+participant "backup: BackupService" as BAK
+participant "db: BaseDeDatos" as DB
+
+activate ADM
+
+== Configurar Marca ==
+ADM -> CFG : configurarMarca(datosMarca)
+activate CFG
+
+CFG -> DB : guardarConfiguracion("marca", datos)
+activate DB
+DB --> CFG : confirmacion
+deactivate DB
+
+CFG --> ADM : marcaActualizada
+deactivate CFG
+
+== Configurar Módulos ==
+ADM -> CFG : activarModulo(modulo, estado)
+activate CFG
+
+alt Desactivar módulo con dependencias
+    CFG -> CFG : verificarDependencias(modulo)
+    
+    CFG --> ADM : advertencia: "Examenes y IA dependen de este módulo"
+    note right: Requiere confirmación explícita
+end
+
+CFG -> DB : actualizarModulo(modulo, estado)
+activate DB
+DB --> CFG : confirmacion
+deactivate DB
+
+CFG --> ADM : moduloActualizado
+deactivate CFG
+
+== Configurar Integraciones ==
+ADM -> CFG : configurarAPI(servicio, credenciales)
+activate CFG
+
+CFG -> API : validarCredenciales(servicio, credenciales)
+activate API
+API --> CFG : credencialesValidas / invalidas
+deactivate API
+
+alt Credenciales válidas
+    CFG -> DB : guardarConfiguracionAPI(servicio, credenciales)
+    activate DB
+    DB --> CFG : confirmacion
+    deactivate DB
+    
+    CFG --> ADM : API configurada y operativa
+    
+else Credenciales inválidas
+    CFG --> ADM : error: "Verifique credenciales del servicio"
+end
+
+deactivate CFG
+
+== Configurar Backups ==
+ADM -> CFG : programarBackup(frecuencia, destino)
+activate CFG
+
+CFG -> BAK : validarDestino(destino)
+activate BAK
+BAK --> CFG : destinoAccesible
+deactivate BAK
+
+CFG -> DB : guardarProgramacionBackup(datos)
+activate DB
+DB --> CFG : confirmacion
+deactivate DB
+
+CFG --> ADM : backupProgramado
+deactivate CFG
+
+deactivate ADM
+@enduml
